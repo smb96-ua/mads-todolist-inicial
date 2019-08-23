@@ -1,9 +1,12 @@
 package madstodolist.model;
 
+import java.util.Date;
+
 public class Usuario {
     private String email;
     private String nombre;
     private String password;
+    private Date fechaNacimiento;
 
     public Usuario(String email) {
         this.email = email;
@@ -31,5 +34,13 @@ public class Usuario {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
 }
