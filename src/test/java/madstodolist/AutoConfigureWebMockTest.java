@@ -1,4 +1,4 @@
-package demoapp;
+package madstodolist;
 
 
 import org.junit.Test;

@@ -1,8 +1,8 @@
-package demoapp;
+package madstodolist;
 
 
-import demoapp.controller.SaludoController;
-import demoapp.service.SaludoService;
+import madstodolist.controller.SaludoController;
+import madstodolist.service.SaludoService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

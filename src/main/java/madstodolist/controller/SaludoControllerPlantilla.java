@@ -1,6 +1,6 @@
-package demoapp.controller;
+package madstodolist.controller;
 
-import demoapp.service.SaludoService;
+import madstodolist.service.SaludoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;

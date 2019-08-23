@@ -22,7 +22,7 @@ También puedes generar un `jar` y ejecutarlo:
 
 ```
 $ mvn package
-$ java -jar target/demoapp-0.0.1-SNAPSHOT.jar 
+$ java -jar target/madstodolist-0.0.1-SNAPSHOT.jar 
 ```
 
 Una vez lanzada la aplicación puedes abrir un navegador y probar los distintos _controllers_:
