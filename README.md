@@ -1,6 +1,6 @@
-# Aplicación inicial Spring Boot
+# Aplicación inicial ToDoList
 
-Aplicación básica usand Spring Boot y plantillas Thymeleaf.
+Aplicación ToDoList de la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docente/GuiaDocente/Index?wcodest=C203&wcodasi=34037&wlengua=es&scaca=2019-20) usando Spring Boot y plantillas Thymeleaf.
 
 ## Requisitos
 
@@ -22,7 +22,7 @@ También puedes generar un `jar` y ejecutarlo:
 
 ```
 $ mvn package
-$ java -jar target/madstodolist-0.0.1-SNAPSHOT.jar 
+$ java -jar target/mads-todolist-inicial-0.0.1-SNAPSHOT.jar 
 ```
 
 Una vez lanzada la aplicación puedes abrir un navegador y probar los distintos _controllers_:
