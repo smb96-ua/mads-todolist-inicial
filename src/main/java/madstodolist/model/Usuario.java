@@ -1,15 +1,30 @@
 package madstodolist.model;
 
+import javax.persistence.*;
 import java.util.Date;
 
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String email;
     private String nombre;
     private String password;
+    @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
 
     public Usuario(String email) {
         this.email = email;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getEmail() {
