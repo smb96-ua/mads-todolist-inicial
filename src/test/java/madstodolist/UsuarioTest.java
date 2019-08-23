@@ -26,13 +26,18 @@ public class UsuarioTest {
 
     @Test
     public void crearUsuario() throws Exception {
+
+        // GIVEN
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+
+        // WHEN
         usuario.setNombre("Juan Gutiérrez");
         usuario.setPassword("12345678");
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         usuario.setFechaNacimiento(sdf.parse("1997-02-20"));
 
+        // THEN
         assertThat(usuario.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
         assertThat(usuario.getNombre()).isEqualTo("Juan Gutiérrez");
         assertThat(usuario.getPassword()).isEqualTo("12345678");
@@ -42,9 +47,25 @@ public class UsuarioTest {
     @Test
     @Transactional
     public void crearUsuarioBaseDatos() throws Exception {
+
+        // GIVEN
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        usuario.setNombre("Juan Gutiérrez");
+        usuario.setPassword("12345678");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        usuario.setFechaNacimiento(sdf.parse("1997-02-20"));
+
+        // WHEN
+
         usuarioDao.save(usuario);
+
+        // THEN
         assertThat(usuario.getId()).isNotNull();
         logger.info("Identificador del usuario: " + usuario.getId());
+        assertThat(usuario.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
+        assertThat(usuario.getNombre()).isEqualTo("Juan Gutiérrez");
+        assertThat(usuario.getPassword()).isEqualTo("12345678");
+        assertThat(usuario.getFechaNacimiento()).isEqualTo(sdf.parse("1997-02-20"));
     }
 }
