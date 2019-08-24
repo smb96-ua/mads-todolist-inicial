@@ -68,4 +68,20 @@ public class UsuarioTest {
         assertThat(usuario.getPassword()).isEqualTo("12345678");
         assertThat(usuario.getFechaNacimiento()).isEqualTo(sdf.parse("1997-02-20"));
     }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void buscarUsuarioEnBaseDatos() throws Exception {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        // WHEN
+
+        Usuario usuario = usuarioDao.findById(1L).orElse(null);
+
+        // THEN
+        assertThat(usuario).isNotNull();
+        assertThat(usuario.getId()).isEqualTo(1L);
+        assertThat(usuario.getNombre()).isEqualTo("Ana García");
+    }
 }
