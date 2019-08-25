@@ -2,4 +2,8 @@ package madstodolist.model;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface IUsuarioDao extends CrudRepository<Usuario, Long> {}
+import java.util.Optional;
+
+public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
+    Optional<Usuario> findByEmail(String s);
+}
