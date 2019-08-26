@@ -10,8 +10,8 @@
 <h1>Login</h1>
 
 <form method="post" th:action="@{/login}" th:object="${loginData}">
-	<input id="username"  name="username" required placeholder="Correo electrónico" type="text" /> <br/>
-	<input id="password" name="password" required placeholder="Contraseña" type="password" /> <br/>
+	<input id="username"  name="username" placeholder="Correo electrónico" type="text" th:field="*{eMail}" required/> <br/>
+	<input id="password" name="password"  placeholder="Contraseña" type="password" th:field="*{password}" required/> <br/>
 	<input th:value="Login"  type="submit" />
 </form>
 
