@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-	<meta charset="UTF-8"/>
-	<title th:text="Login"></title>
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
-</head>
+<head th:replace="fragments :: head (titulo='Login')"></head>
 
 <body>
 <div class="container-fluid">
@@ -40,9 +36,7 @@
 	</div>
 </div>
 
-	<script th:src="@{/js/jquery.min.js}"></script>
-	<script th:src="@{/js/popper.min.js.css}"></script>
-	<script th:src="@{/js/bootstrap.min.js}"></script>
+<div th:replace="fragments::javascript"/>
 
 </body>
 </html>
