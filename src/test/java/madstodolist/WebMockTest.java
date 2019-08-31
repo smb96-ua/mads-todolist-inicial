@@ -31,7 +31,9 @@ public class WebMockTest {
     @Test
     public void greetingShouldReturnMessageFromService() throws Exception {
         when(service.saluda("Domingo")).thenReturn("Hola Mock Domingo");
-        this.mockMvc.perform(get("/saludo/Domingo")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/saludo/Domingo"))
+                .andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(content().string(containsString("Hola Mock Domingo")));
     }
 }
