@@ -1,23 +1,19 @@
 package madstodolist;
 
-import madstodolist.model.UsuarioRepository;
 import madstodolist.model.Usuario;
 import madstodolist.model.Usuario.LoginStatus;
-import madstodolist.service.SaludoService;
+import madstodolist.model.UsuarioRepository;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -125,5 +121,24 @@ public class UsuarioTest {
         assertThat(loginStatusOK).isEqualTo(LoginStatus.LOGIN_OK);
         assertThat(loginStatusErrorPassword).isEqualTo(LoginStatus.ERROR_PASSWORD);
         assertThat(loginStatusNoUsuario).isEqualTo(LoginStatus.USER_NOT_FOUND);
+    }
+
+    @Test
+    @Transactional
+    public void servicioRegistroUsuario() throws Exception {
+        // GIVEN
+
+        Usuario usuario = new Usuario("usuario.prueba@gmail.com");
+        usuario.setPassword("12345678");
+
+        // WHEN
+
+        usuarioService.registrar(usuario);
+
+        // THEN
+
+        Usuario usuarioBaseDatos = usuarioRepository.findByEmail("usuario.prueba@gmail.com").orElse(null);
+        assertThat(usuarioBaseDatos).isNotNull();
+        assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
     }
 }
