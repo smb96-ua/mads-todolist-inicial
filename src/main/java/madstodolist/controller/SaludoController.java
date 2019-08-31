@@ -11,12 +11,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class SaludoController {
 
-    private final SaludoService service;
-
     @Autowired
-    public SaludoController(SaludoService service) {
-        this.service = service;
-    }
+    SaludoService service;
 
     @RequestMapping("/saludo/{nombre}")
     public @ResponseBody String saludo(@PathVariable(value="nombre") String nombre) {
