@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import sun.rmi.runtime.Log;
 
 import java.util.Optional;
 
@@ -29,5 +28,23 @@ public class UsuarioService {
         } else {
             return LoginStatus.LOGIN_OK;
         }
+    }
+
+    // Se añade un usuario en la aplicación.
+    // El email y password del usuario deben ser distinto de null
+    // El email no debe estar registrado en la base de datos
+    public Usuario registrar(Usuario usuario) {
+        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioBD.isPresent())
+            throw new IllegalArgumentException("El usuario ya está registrado");
+        else if (usuario.getEmail() == null)
+            throw new IllegalArgumentException("El usuario no tiene email");
+        else if (usuario.getPassword() == null)
+            throw new IllegalArgumentException("El usuario no tiene password");
+        else return usuarioRepository.save(usuario);
+    }
+
+    public Usuario findByEmail(String email) {
+        return usuarioRepository.findByEmail(email).orElse(null);
     }
 }
