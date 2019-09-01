@@ -141,4 +141,60 @@ public class UsuarioTest {
         assertThat(usuarioBaseDatos).isNotNull();
         assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void servicioRegistroUsuarioExcepcionConNullPassword() {
+        // Pasamos como argumento un usario sin contraseña
+        Usuario usuario =  new Usuario("usuario.prueba@gmail.com");
+        usuarioService.registrar(usuario);
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
+        // WHEN
+        // Pasamos como argumento un usario con emaii existente en datos-test.sql
+        Usuario usuario =  new Usuario("ana.garcia@gmail.com");
+        usuario.setPassword("12345678");
+        usuarioService.registrar(usuario);
+
+        // THEN
+        // Se produce una excepción comprobada con el expected del test
+    }
+
+    @Test
+    @Transactional
+    public void servicioRegistroUsuarioDevuelveUsuarioConId() {
+        // GIVEN
+
+        Usuario usuario = new Usuario("usuario.prueba@gmail.com");
+        usuario.setPassword("12345678");
+
+        // WHEN
+
+        usuario = usuarioService.registrar(usuario);
+
+        // THEN
+
+        assertThat(usuario.getId()).isNotNull();
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void servicioConsultaUsuarioDevuelveUsuario() {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
+        // WHEN
+
+        Usuario usuario = usuarioService.findByEmail("ana.garcia@gmail.com");
+
+        // THEN
+
+        assertThat(usuario.getId()).isEqualTo(1L);
+
+    }
 }
