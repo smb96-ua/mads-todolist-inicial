@@ -38,13 +38,13 @@ public class LoginController {
             model.addAttribute("mensaje", "Hola " + loginData.geteMail() + "!!!");
             return "saludo";
         } else if (loginStatus == LoginStatus.USER_NOT_FOUND) {
-            flash.addFlashAttribute("error", "No existe usuario");
-            return "redirect:/login";
+            model.addAttribute("error", "No existe usuario");
+            return "loginForm";
         } else if (loginStatus == LoginStatus.ERROR_PASSWORD) {
-            flash.addFlashAttribute("error", "Contraseña incorrecta");
-            return "redirect:/login";
+            model.addAttribute("error", "Contraseña incorrecta");
+            return "loginForm";
         }
-        return "redirect:/login";
+        return "loginForm";
     }
 
     @GetMapping("/registro")
