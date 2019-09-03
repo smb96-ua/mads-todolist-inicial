@@ -2,9 +2,11 @@ package madstodolist.controller;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.Email;
 import java.util.Date;
 
 public class RegistroData {
+    @Email
     private String eMail;
     private String password;
     private String nombre;
