@@ -32,8 +32,6 @@ public class LoginController {
         // Llamada al servicio para comprobar si el login es correcto
         LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 
-        System.out.println("Login Status: " + loginStatus);
-
         if (loginStatus == LoginStatus.LOGIN_OK) {
             model.addAttribute("mensaje", "Hola " + loginData.geteMail() + "!!!");
             return "saludo";
@@ -46,4 +44,28 @@ public class LoginController {
         }
         return "redirect:/login";
     }
+
+    @GetMapping("/registro")
+    public String registroForm(Model model) {
+        model.addAttribute("registroData", new RegistroData());
+        return "registroForm";
+    }
+
+   @PostMapping("/registro")
+   public String registroSubmit(@ModelAttribute RegistroData registroData, Model model, RedirectAttributes flash) {
+
+        if (usuarioService.findByEmail(registroData.geteMail()) != null) {
+            flash.addFlashAttribute("error", "El usuario " + registroData.geteMail() + " ya existe");
+            return "redirect:/registro";
+        }
+
+        Usuario usuario = new Usuario(registroData.geteMail());
+        usuario.setPassword(registroData.getPassword());
+        usuario.setFechaNacimiento(registroData.getFechaNacimiento());
+        usuario.setNombre(registroData.getNombre());
+
+        usuarioService.registrar(usuario);
+        return "redirect:/login";
+   }
+
 }
