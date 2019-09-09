@@ -34,4 +34,20 @@ public class TareaTest {
         assertThat(tarea.getTitulo()).isEqualTo("Práctica 1 de MADS");
         assertThat(tarea.getUsuario()).isEqualTo(usuario);
     }
+
+    @Test
+    public void comprobarIgualdadSinId() {
+        // GIVEN
+
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea1 = new Tarea(usuario, "Práctica 1 de MADS");
+        Tarea tarea2 = new Tarea(usuario, "Práctica 1 de MADS");
+        Tarea tarea3 = new Tarea(usuario, "Pagar el alquiler");
+
+        // THEN
+
+        assertThat(tarea1).isEqualTo(tarea2);
+        assertThat(tarea1).isNotEqualTo(tarea3);
+    }
+
 }
