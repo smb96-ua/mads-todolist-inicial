@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -90,5 +92,21 @@ public class TareaTest {
 
         // THEN
         // Se lanza una excepción (capturada en el test)
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void unUsuarioTieneUnaListaDeTareas() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        Usuario usuario = usuarioRepository.findById(1L).orElse(null);
+
+        // WHEN
+        List<Tarea> tareas = usuario.getTareas();
+
+        // THEN
+
+        assertThat(tareas).hasSize(2);
     }
 }
