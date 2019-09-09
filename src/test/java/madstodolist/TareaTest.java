@@ -109,4 +109,25 @@ public class TareaTest {
 
         assertThat(tareas).hasSize(2);
     }
+
+    @Test
+    @Transactional
+    public void unaTareaNuevaSeAñadeALaListaDeTareas() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        Usuario usuario = usuarioRepository.findById(1L).orElse(null);
+
+        // WHEN
+
+        List<Tarea> tareas = usuario.getTareas();
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        tareaRepository.save(tarea);
+
+        // THEN
+
+        assertThat(usuario.getTareas()).hasSize(3);
+        assertThat(tareas).isEqualTo(usuario.getTareas());
+        assertThat(usuario.getTareas()).contains(tarea);
+    }
 }
