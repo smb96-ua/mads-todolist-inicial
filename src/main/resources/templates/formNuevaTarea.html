@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Login')"></head>
+
+<body>
+<div class="container-fluid">
+
+    <h1 th:text="'Nueva tarea para el usuario' + ${usuario.getNombre()}"></h1>
+
+    <form method="post" th:action="@{/usuarios/{id}/tareas/nueva(id=${usuario.getId()})}" th:object="${tareaData}">
+        <div class="form-group">
+            <label for="titulo">Título de la tarea:</label>
+            <input id="titulo" class="form-control" name="titulo" type="text" th:field="*{titulo}" required/>
+            <button type="submit" class="btn btn-primary">Crear tarea</button>
+            <a class="btn btn-link" href="/">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
