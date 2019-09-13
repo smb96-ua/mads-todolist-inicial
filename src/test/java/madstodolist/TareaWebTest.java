@@ -4,6 +4,7 @@ import madstodolist.controller.LoginController;
 import madstodolist.controller.TareaController;
 import madstodolist.model.Usuario;
 import madstodolist.model.Usuario.LoginStatus;
+import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,9 @@ public class TareaWebTest {
 
     @MockBean
     private UsuarioService usuarioService;
+
+    @MockBean
+    private TareaService tareaService;
 
     @Test
     public void tareaControllerDevuelveForm() throws Exception {
