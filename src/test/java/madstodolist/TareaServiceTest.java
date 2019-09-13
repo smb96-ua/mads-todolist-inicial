@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -37,5 +39,25 @@ public class TareaServiceTest {
 
         Usuario usuario = usuarioService.findByEmail("ana.garcia@gmail.com");
         assertThat(usuario.getTareas()).contains(tarea);
+    }
+
+    @Test
+    public void testListadoTareas() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        Usuario usuario = new Usuario("ana.garcia@gmail.com");
+        usuario.setId(1L);
+
+        Tarea lavarCoche = new Tarea(usuario, "Lavar coche");
+        lavarCoche.setId(1L);
+
+        // WHEN
+
+        List<Tarea> tareas = tareaService.allTareasUsuario(1L);
+
+        // THEN
+
+        assertThat(tareas).contains(lavarCoche);
     }
 }

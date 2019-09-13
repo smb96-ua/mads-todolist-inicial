@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class TareaService {
 
@@ -33,5 +35,14 @@ public class TareaService {
         Tarea tarea = new Tarea(usuario, tituloTarea);
         tareaRepository.save(tarea);
         return tarea;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Tarea> allTareasUsuario(Long idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
+        }
+        return usuario.getTareas();
     }
 }

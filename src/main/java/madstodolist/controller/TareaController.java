@@ -1,6 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.controller.exception.UsuarioNotFoundException;
+import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 public class TareaController {
@@ -34,9 +37,24 @@ public class TareaController {
 
     @PostMapping("/usuarios/{id}/tareas/nueva")
     public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData, Model model) {
+        Usuario usuario = usuarioService.findById(idUsuario);
+        if (usuario == null) {
+            throw new UsuarioNotFoundException();
+        }
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
-        model.addAttribute("mensaje", "Añadida tarea " + tareaData.getTitulo());
-        return "saludo";
+        return "redirect:/usuarios/" + idUsuario + "/tareas";
+    }
+
+    @GetMapping("/usuarios/{id}/tareas")
+    public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model) {
+        Usuario usuario = usuarioService.findById(idUsuario);
+        if (usuario == null) {
+            throw new UsuarioNotFoundException();
+        }
+        List<Tarea> tareas = tareaService.allTareasUsuario(idUsuario);
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("tareas", tareas);
+        return "listaTareas";
     }
 }
 
