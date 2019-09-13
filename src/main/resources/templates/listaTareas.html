@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Login')"></head>
+
+<body>
+<div class="container-fluid">
+
+    <h2 th:text="'Listado de tareas de ' + ${usuario.nombre}"></h2>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>título</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tarea: ${tareas}">
+            <td th:text="${tarea.id}"></td>
+            <td th:text="${tarea.titulo}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
