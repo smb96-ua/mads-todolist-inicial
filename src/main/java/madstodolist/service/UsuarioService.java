@@ -38,11 +38,11 @@ public class UsuarioService {
     public Usuario registrar(Usuario usuario) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
-            throw new IllegalArgumentException("El usuario ya está registrado");
+            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
         else if (usuario.getEmail() == null)
-            throw new IllegalArgumentException("El usuario no tiene email");
+            throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getPassword() == null)
-            throw new IllegalArgumentException("El usuario no tiene password");
+            throw new UsuarioServiceException("El usuario no tiene password");
         else return usuarioRepository.save(usuario);
     }
 
