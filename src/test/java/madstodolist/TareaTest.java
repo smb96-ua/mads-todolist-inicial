@@ -115,7 +115,7 @@ public class TareaTest {
 
         // THEN
 
-        assertThat(tareas).hasSize(2);
+        assertThat(tareas).isNotEmpty();
     }
 
     @Test
@@ -134,7 +134,7 @@ public class TareaTest {
 
         // THEN
 
-        assertThat(usuario.getTareas()).hasSize(3);
+        assertThat(usuario.getTareas()).contains(tarea);
         assertThat(tareas).isEqualTo(usuario.getTareas());
         assertThat(usuario.getTareas()).contains(tarea);
     }
