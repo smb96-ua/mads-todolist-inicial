@@ -33,9 +33,10 @@ public class TareaController {
     }
 
     @PostMapping("/usuarios/{id}/tareas/nueva")
-    public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData, RedirectAttributes flash) {
+    public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData, Model model) {
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
-        return "redirect:/usuarios/"+idUsuario+"/tareas";
+        model.addAttribute("mensaje", "Añadida tarea " + tareaData.getTitulo());
+        return "saludo";
     }
 }
 

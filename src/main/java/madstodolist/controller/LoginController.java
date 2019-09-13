@@ -22,7 +22,7 @@ public class LoginController {
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("loginData", new LoginData());
-        return "loginForm";
+        return "formLogin";
     }
 
     @PostMapping("/login")
@@ -36,18 +36,18 @@ public class LoginController {
             return "saludo";
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
-            return "loginForm";
+            return "formLogin";
         } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
             model.addAttribute("error", "Contraseña incorrecta");
-            return "loginForm";
+            return "formLogin";
         }
-        return "loginForm";
+        return "formLogin";
     }
 
     @GetMapping("/registro")
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
-        return "registroForm";
+        return "formRegistro";
     }
 
    @PostMapping("/registro")
@@ -60,7 +60,7 @@ public class LoginController {
         if (usuarioService.findByEmail(registroData.geteMail()) != null) {
             model.addAttribute("registroData", registroData);
             model.addAttribute("error", "El usuario " + registroData.geteMail() + " ya existe");
-            return "registroForm";
+            return "formRegistro";
         }
 
         Usuario usuario = new Usuario(registroData.geteMail());

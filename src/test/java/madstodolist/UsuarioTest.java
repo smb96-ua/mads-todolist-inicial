@@ -3,6 +3,7 @@ package madstodolist;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
 import madstodolist.service.UsuarioService;
+import madstodolist.service.UsuarioServiceException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -149,7 +150,7 @@ public class UsuarioTest {
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = UsuarioServiceException.class)
     public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
         // GIVEN
         // Datos cargados de datos-test.sql
