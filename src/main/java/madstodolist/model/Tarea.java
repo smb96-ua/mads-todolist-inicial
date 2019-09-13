@@ -31,9 +31,13 @@ public class Tarea implements Serializable {
     // de ser privado.
     private Tarea() {}
 
+    // Al crear una tarea la asociamos automáticamente a un
+    // usuario. Actualizamos por tanto la lista de tareas del
+    // usuario.
     public Tarea(Usuario usuario, String titulo) {
         this.usuario = usuario;
         this.titulo = titulo;
+        usuario.getTareas().add(this);
     }
 
     public Long getId() {
