@@ -15,7 +15,7 @@
             <input class="form-control" id="titulo" name="titulo" required th:field="*{titulo}" type="text"/>
         </div>
         <button class="btn btn-primary" type="submit">Crear tarea</button>
-        <a class="btn btn-link" href="/">Cancelar</a>
+        <a class="btn btn-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.getId()})}">Cancelar</a>
         </div>
     </form>
 </div>
