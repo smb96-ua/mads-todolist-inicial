@@ -24,8 +24,8 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
-
         Optional<Usuario> usuario = usuarioRepository.findByEmail(eMail);
         if (!usuario.isPresent()) {
             return LoginStatus.USER_NOT_FOUND;
@@ -39,6 +39,7 @@ public class UsuarioService {
     // Se añade un usuario en la aplicación.
     // El email y password del usuario deben ser distinto de null
     // El email no debe estar registrado en la base de datos
+    @Transactional
     public Usuario registrar(Usuario usuario) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
@@ -55,6 +56,7 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public Usuario findById(Long usuarioId) {
         return usuarioRepository.findById(usuarioId).orElse(null);
     }
