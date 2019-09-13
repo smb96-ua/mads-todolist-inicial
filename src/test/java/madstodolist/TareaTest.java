@@ -27,6 +27,10 @@ public class TareaTest {
     @Autowired
     TareaRepository tareaRepository;
 
+    //
+    // Tests modelo Tarea
+    //
+
     @Test
     public void crearTarea() throws Exception {
         // GIVEN
@@ -56,6 +60,10 @@ public class TareaTest {
         assertThat(tarea1).isEqualTo(tarea2);
         assertThat(tarea1).isNotEqualTo(tarea3);
     }
+
+    //
+    // Tests TareaRepository
+    //
 
     @Test
     @Transactional
