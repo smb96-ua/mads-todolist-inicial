@@ -2,8 +2,6 @@ package madstodolist.controller;
 
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
-import madstodolist.model.Usuario.LoginStatus;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 @Controller
 public class LoginController {
@@ -25,32 +22,32 @@ public class LoginController {
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("loginData", new LoginData());
-        return "loginForm";
+        return "formLogin";
     }
 
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute LoginData loginData, Model model, RedirectAttributes flash) {
 
         // Llamada al servicio para comprobar si el login es correcto
-        LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
+        UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 
-        if (loginStatus == LoginStatus.LOGIN_OK) {
+        if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
             model.addAttribute("mensaje", "Hola " + loginData.geteMail() + "!!!");
             return "saludo";
-        } else if (loginStatus == LoginStatus.USER_NOT_FOUND) {
+        } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
-            return "loginForm";
-        } else if (loginStatus == LoginStatus.ERROR_PASSWORD) {
+            return "formLogin";
+        } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
             model.addAttribute("error", "Contraseña incorrecta");
-            return "loginForm";
+            return "formLogin";
         }
-        return "loginForm";
+        return "formLogin";
     }
 
     @GetMapping("/registro")
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
-        return "registroForm";
+        return "formRegistro";
     }
 
    @PostMapping("/registro")
@@ -63,7 +60,7 @@ public class LoginController {
         if (usuarioService.findByEmail(registroData.geteMail()) != null) {
             model.addAttribute("registroData", registroData);
             model.addAttribute("error", "El usuario " + registroData.geteMail() + " ya existe");
-            return "registroForm";
+            return "formRegistro";
         }
 
         Usuario usuario = new Usuario(registroData.geteMail());

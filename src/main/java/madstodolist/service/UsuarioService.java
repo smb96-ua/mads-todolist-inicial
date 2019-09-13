@@ -1,7 +1,6 @@
 package madstodolist.service;
 
 import madstodolist.model.Usuario;
-import madstodolist.model.Usuario.LoginStatus;
 import madstodolist.model.UsuarioRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,17 @@ public class UsuarioService {
 
     Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
+    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD}
+
+    private UsuarioRepository usuarioRepository;
+
     @Autowired
-    UsuarioRepository usuarioRepository;
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
-    public Usuario.LoginStatus login(String eMail, String password) {
-
+    @Transactional(readOnly = true)
+    public LoginStatus login(String eMail, String password) {
         Optional<Usuario> usuario = usuarioRepository.findByEmail(eMail);
         if (!usuario.isPresent()) {
             return LoginStatus.USER_NOT_FOUND;
@@ -34,14 +39,15 @@ public class UsuarioService {
     // Se añade un usuario en la aplicación.
     // El email y password del usuario deben ser distinto de null
     // El email no debe estar registrado en la base de datos
+    @Transactional
     public Usuario registrar(Usuario usuario) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
-            throw new IllegalArgumentException("El usuario ya está registrado");
+            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
         else if (usuario.getEmail() == null)
-            throw new IllegalArgumentException("El usuario no tiene email");
+            throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getPassword() == null)
-            throw new IllegalArgumentException("El usuario no tiene password");
+            throw new UsuarioServiceException("El usuario no tiene password");
         else return usuarioRepository.save(usuario);
     }
 
@@ -50,6 +56,7 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email).orElse(null);
     }
 
+    @Transactional(readOnly = true)
     public Usuario findById(Long usuarioId) {
         return usuarioRepository.findById(usuarioId).orElse(null);
     }
