@@ -3,7 +3,6 @@ package madstodolist;
 import madstodolist.controller.LoginController;
 import madstodolist.controller.TareaController;
 import madstodolist.model.Usuario;
-import madstodolist.model.Usuario.LoginStatus;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;

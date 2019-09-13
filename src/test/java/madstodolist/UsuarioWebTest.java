@@ -1,7 +1,6 @@
 package madstodolist;
 
 import madstodolist.controller.LoginController;
-import madstodolist.model.Usuario.LoginStatus;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +30,7 @@ public class UsuarioWebTest {
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
 
-        when(usuarioService.login("ana.garcia@gmail.com", "12345678")).thenReturn(LoginStatus.LOGIN_OK);
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678")).thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","ana.garcia@gmail.com")
@@ -44,7 +43,7 @@ public class UsuarioWebTest {
     @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
 
-        when(usuarioService.login("pepito.perez@gmail.com", "12345678")).thenReturn(LoginStatus.USER_NOT_FOUND);
+        when(usuarioService.login("pepito.perez@gmail.com", "12345678")).thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","pepito.perez@gmail.com")
@@ -56,7 +55,7 @@ public class UsuarioWebTest {
     @Test
     public void servicioLoginUsuarioErrorPassword() throws Exception {
 
-        when(usuarioService.login("ana.garcia@gmail.com", "000")).thenReturn(LoginStatus.ERROR_PASSWORD);
+        when(usuarioService.login("ana.garcia@gmail.com", "000")).thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","ana.garcia@gmail.com")

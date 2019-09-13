@@ -1,7 +1,6 @@
 package madstodolist;
 
 import madstodolist.model.Usuario;
-import madstodolist.model.Usuario.LoginStatus;
 import madstodolist.model.UsuarioRepository;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;
@@ -112,15 +111,15 @@ public class UsuarioTest {
 
         // WHEN
 
-        LoginStatus loginStatusOK = usuarioService.login("ana.garcia@gmail.com", "12345678");
-        LoginStatus loginStatusErrorPassword = usuarioService.login("ana.garcia@gmail.com", "000");
-        LoginStatus loginStatusNoUsuario = usuarioService.login("pepito.perez@gmail.com", "12345678");
+        UsuarioService.LoginStatus loginStatusOK = usuarioService.login("ana.garcia@gmail.com", "12345678");
+        UsuarioService.LoginStatus loginStatusErrorPassword = usuarioService.login("ana.garcia@gmail.com", "000");
+        UsuarioService.LoginStatus loginStatusNoUsuario = usuarioService.login("pepito.perez@gmail.com", "12345678");
 
         // THEN
 
-        assertThat(loginStatusOK).isEqualTo(LoginStatus.LOGIN_OK);
-        assertThat(loginStatusErrorPassword).isEqualTo(LoginStatus.ERROR_PASSWORD);
-        assertThat(loginStatusNoUsuario).isEqualTo(LoginStatus.USER_NOT_FOUND);
+        assertThat(loginStatusOK).isEqualTo(UsuarioService.LoginStatus.LOGIN_OK);
+        assertThat(loginStatusErrorPassword).isEqualTo(UsuarioService.LoginStatus.ERROR_PASSWORD);
+        assertThat(loginStatusNoUsuario).isEqualTo(UsuarioService.LoginStatus.USER_NOT_FOUND);
     }
 
     @Test
