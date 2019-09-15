@@ -45,4 +45,10 @@ public class TareaService {
         }
         return usuario.getTareas();
     }
+
+    @Transactional(readOnly = true)
+    public Tarea findById(Long tareaId) {
+        return tareaRepository.findById(tareaId).orElse(null);
+    }
+
 }

@@ -60,4 +60,19 @@ public class TareaServiceTest {
 
         assertThat(tareas).contains(lavarCoche);
     }
+
+    @Test
+    public void testBuscarTarea() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        // WHEN
+
+        Tarea lavarCoche = tareaService.findById(1L);
+
+        // THEN
+
+        assertThat(lavarCoche).isNotNull();
+        assertThat(lavarCoche.getTitulo()).isEqualTo("Lavar coche");
+    }
 }
