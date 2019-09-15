@@ -45,4 +45,29 @@ public class TareaService {
         }
         return usuario.getTareas();
     }
+
+    @Transactional(readOnly = true)
+    public Tarea findById(Long tareaId) {
+        return tareaRepository.findById(tareaId).orElse(null);
+    }
+
+    @Transactional
+    public Tarea modificaTarea(Long idTarea, String nuevoTitulo) {
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tarea.setTitulo(nuevoTitulo);
+        tareaRepository.save(tarea);
+        return tarea;
+    }
+
+    @Transactional
+    public void borraTarea(Long idTarea) {
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tareaRepository.delete(tarea);
+    }
 }

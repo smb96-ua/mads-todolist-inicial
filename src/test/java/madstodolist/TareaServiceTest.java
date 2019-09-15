@@ -60,4 +60,54 @@ public class TareaServiceTest {
 
         assertThat(tareas).contains(lavarCoche);
     }
+
+    @Test
+    public void testBuscarTarea() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        // WHEN
+
+        Tarea lavarCoche = tareaService.findById(1L);
+
+        // THEN
+
+        assertThat(lavarCoche).isNotNull();
+        assertThat(lavarCoche.getTitulo()).isEqualTo("Lavar coche");
+    }
+
+    @Test
+    public void testModificarTarea() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Pagar el recibo");
+        Long idNuevaTarea = tarea.getId();
+
+        // WHEN
+
+        Tarea tareaModificada = tareaService.modificaTarea(idNuevaTarea, "Pagar la matrícula");
+        Tarea tareaBD = tareaService.findById(idNuevaTarea);
+
+        // THEN
+
+        assertThat(tareaModificada.getTitulo()).isEqualTo("Pagar la matrícula");
+        assertThat(tareaBD.getTitulo()).isEqualTo("Pagar la matrícula");
+    }
+
+    @Test
+    public void testBorrarTarea() {
+        // GIVEN
+
+        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Estudiar MADS");
+
+        // WHEN
+
+        tareaService.borraTarea(tarea.getId());
+
+        // THEN
+
+        assertThat(tareaService.findById(tarea.getId())).isNull();
+
+    }
 }
