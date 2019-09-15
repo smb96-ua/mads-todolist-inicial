@@ -75,4 +75,20 @@ public class TareaServiceTest {
         assertThat(lavarCoche).isNotNull();
         assertThat(lavarCoche.getTitulo()).isEqualTo("Lavar coche");
     }
+
+    @Test
+    public void testModificarTarea() {
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        // WHEN
+
+        Tarea tarea = tareaService.modificaTarea(1L, "Lavar el coche y llenar el depósito");
+        Tarea tareaBD = tareaService.findById(1L);
+
+        // THEN
+
+        assertThat(tarea.getTitulo()).isEqualTo("Lavar el coche y llenar el depósito");
+        assertThat(tareaBD.getTitulo()).isEqualTo("Lavar el coche y llenar el depósito");
+    }
 }
