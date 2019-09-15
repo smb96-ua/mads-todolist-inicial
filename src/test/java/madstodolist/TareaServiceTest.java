@@ -91,4 +91,20 @@ public class TareaServiceTest {
         assertThat(tarea.getTitulo()).isEqualTo("Lavar el coche y llenar el depósito");
         assertThat(tareaBD.getTitulo()).isEqualTo("Lavar el coche y llenar el depósito");
     }
+
+    @Test
+    public void testBorrarTarea() {
+        // GIVEN
+
+        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Estudiar MADS");
+
+        // WHEN
+
+        tareaService.borraTarea(tarea.getId());
+
+        // THEN
+
+        assertThat(tareaService.findById(tarea.getId())).isNull();
+
+    }
 }

@@ -61,4 +61,13 @@ public class TareaService {
         tareaRepository.save(tarea);
         return tarea;
     }
+
+    @Transactional
+    public void borraTarea(Long idTarea) {
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tareaRepository.delete(tarea);
+    }
 }
