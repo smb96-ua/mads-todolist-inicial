@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -36,12 +37,13 @@ public class TareaController {
     }
 
     @PostMapping("/usuarios/{id}/tareas/nueva")
-    public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData, Model model) {
+    public String nuevaTarea(@PathVariable(value="id") Long idUsuario, @ModelAttribute TareaData tareaData, Model model, RedirectAttributes flash) {
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
             throw new UsuarioNotFoundException();
         }
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
+        flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
     }
 
@@ -55,6 +57,24 @@ public class TareaController {
         model.addAttribute("usuario", usuario);
         model.addAttribute("tareas", tareas);
         return "listaTareas";
+    }
+
+    @GetMapping("/tareas/{id}/editar")
+    public String formEditaTarea(@PathVariable(value="id") Long idTarea, @ModelAttribute TareaData tareaData, Model model) {
+        Tarea tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+        model.addAttribute("tarea", tarea);
+        tareaData.setTitulo(tarea.getTitulo());
+        return "formEditarTarea";
+    }
+
+    @PostMapping("/tareas/{id}/editar")
+    public String grabaTareaModificada(@PathVariable(value="id") Long idTarea, @ModelAttribute TareaData tareaData, Model model, RedirectAttributes flash) {
+        Tarea tarea = tareaService.modificaTarea(idTarea, tareaData.getTitulo());
+        flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
+        return "redirect:/usuarios/" + tarea.getUsuario().getId() + "/tareas";
     }
 }
 
