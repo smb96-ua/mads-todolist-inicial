@@ -81,15 +81,18 @@ public class TareaServiceTest {
         // GIVEN
         // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
+        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Pagar el recibo");
+        Long idNuevaTarea = tarea.getId();
+
         // WHEN
 
-        Tarea tarea = tareaService.modificaTarea(1L, "Lavar el coche y llenar el depósito");
-        Tarea tareaBD = tareaService.findById(1L);
+        Tarea tareaModificada = tareaService.modificaTarea(idNuevaTarea, "Pagar la matrícula");
+        Tarea tareaBD = tareaService.findById(idNuevaTarea);
 
         // THEN
 
-        assertThat(tarea.getTitulo()).isEqualTo("Lavar el coche y llenar el depósito");
-        assertThat(tareaBD.getTitulo()).isEqualTo("Lavar el coche y llenar el depósito");
+        assertThat(tareaModificada.getTitulo()).isEqualTo("Pagar la matrícula");
+        assertThat(tareaBD.getTitulo()).isEqualTo("Pagar la matrícula");
     }
 
     @Test
