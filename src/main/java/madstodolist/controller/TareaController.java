@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -55,6 +56,23 @@ public class TareaController {
         model.addAttribute("usuario", usuario);
         model.addAttribute("tareas", tareas);
         return "listaTareas";
+    }
+
+    @GetMapping("/tareas/{id}/editar")
+    public String formEditaTarea(@PathVariable(value="id") Long idTarea, @ModelAttribute TareaData tareaData, Model model) {
+        Tarea tarea = tareaService.findById(idTarea);
+        if (tarea == null) {
+            throw new TareaNotFoundException();
+        }
+        model.addAttribute("tarea", tarea);
+        tareaData.setTitulo(tarea.getTitulo());
+        return "formEditarTarea";
+    }
+
+    @PostMapping("/tareas/{id}/editar")
+    public String grabaTareaModificada(@PathVariable(value="id") Long idTarea, @ModelAttribute TareaData tareaData, Model model) {
+        Tarea tarea = tareaService.modificaTarea(idTarea, tareaData.getTitulo());
+        return "redirect:/usuarios/" + tarea.getUsuario().getId() + "/tareas";
     }
 }
 
