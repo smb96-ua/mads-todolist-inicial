@@ -51,7 +51,7 @@ public class LoginController {
     }
 
    @PostMapping("/registro")
-   public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model, RedirectAttributes flash) {
+   public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
             return "registroForm";
