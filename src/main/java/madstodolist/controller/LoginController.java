@@ -32,8 +32,8 @@ public class LoginController {
         UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 
         if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
-            model.addAttribute("mensaje", "Hola " + loginData.geteMail() + "!!!");
-            return "saludo";
+            Usuario usuario = usuarioService.findByEmail(loginData.geteMail());
+            return "redirect:/usuarios/" + usuario.getId() + "/tareas";
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
             return "formLogin";
