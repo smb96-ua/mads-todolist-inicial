@@ -81,4 +81,9 @@ public class LoginController {
         return "redirect:/login";
    }
 
+   @GetMapping("/logout")
+   public String logout(HttpSession session) {
+        session.setAttribute("idUsuarioLogeado", null);
+        return "redirect:/login";
+   }
 }
