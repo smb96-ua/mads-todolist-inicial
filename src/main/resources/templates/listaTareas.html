@@ -19,12 +19,15 @@
                 <tr>
                     <th>Id</th>
                     <th>Tarea</th>
+                    <th>Acción</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="tarea: ${tareas}">
                     <td th:text="${tarea.id}"></td>
                     <td th:text="${tarea.titulo}"></td>
+                    <td><a class="btn btn-primary btn-xs" th:href="@{/tareas/{id}/editar(id=${tarea.id})}" th:text="'editar'"/></a>
+                    </td>
                 </tr>
                 </tbody>
             </table>
