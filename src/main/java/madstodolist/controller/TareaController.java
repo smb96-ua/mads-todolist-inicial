@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -45,7 +46,10 @@ public class TareaController {
     }
 
     @GetMapping("/usuarios/{id}/tareas")
-    public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model) {
+    public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeado(session);
+
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
             throw new UsuarioNotFoundException();
@@ -84,6 +88,11 @@ public class TareaController {
         tareaService.borraTarea(idTarea);
         flash.addFlashAttribute("mensaje", "Tarea borrada correctamente");
         return "";
+    }
+
+    private void comprobarUsuarioLogeado(HttpSession session) {
+        Long idUsuarioLogeado = (Long) session.getAttribute("idUsuarioLogeado");
+        System.out.println("Usuario logeado: " + idUsuarioLogeado);
     }
 }
 
