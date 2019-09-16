@@ -1,6 +1,8 @@
 package madstodolist;
 
+import madstodolist.authentication.ManagerUserSesion;
 import madstodolist.controller.LoginController;
+import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,17 +29,24 @@ public class UsuarioWebTest {
     @MockBean
     private UsuarioService usuarioService;
 
+    @MockBean
+    private ManagerUserSesion managerUserSesion;
+
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
 
+        Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
+        anaGarcia.setId(1L);
+
         when(usuarioService.login("ana.garcia@gmail.com", "12345678")).thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com")).thenReturn(anaGarcia);
 
         this.mockMvc.perform(post("/login")
-                    .param("eMail","ana.garcia@gmail.com")
-                    .param("password","12345678"))
+                .param("eMail", "ana.garcia@gmail.com")
+                .param("password", "12345678"))
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Hola ana.garcia@gmail.com!!!")));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/usuarios/1/tareas"));
     }
 
     @Test

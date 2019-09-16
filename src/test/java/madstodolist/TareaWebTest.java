@@ -1,6 +1,6 @@
 package madstodolist;
 
-import madstodolist.controller.LoginController;
+import madstodolist.authentication.ManagerUserSesion;
 import madstodolist.controller.TareaController;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
@@ -14,12 +14,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TareaController.class)
@@ -33,6 +34,9 @@ public class TareaWebTest {
 
     @MockBean
     private TareaService tareaService;
+
+    @MockBean
+    private ManagerUserSesion managerUserSesion;
 
     @Test
     public void nuevaTareaDevuelveForm() throws Exception {
