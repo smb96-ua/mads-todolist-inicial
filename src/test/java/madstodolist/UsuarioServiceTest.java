@@ -24,7 +24,6 @@ public class UsuarioServiceTest {
     private UsuarioService usuarioService;
 
     @Test
-    @Transactional(readOnly = true)
     public void servicioLoginUsuario() {
         // GIVEN
         // Datos cargados de datos-test.sql
@@ -62,7 +61,6 @@ public class UsuarioServiceTest {
     }
 
     @Test(expected = UsuarioServiceException.class)
-    @Transactional
     public void servicioRegistroUsuarioExcepcionConNullPassword() {
         // Pasamos como argumento un usario sin contraseña
         Usuario usuario =  new Usuario("usuario.prueba@gmail.com");
@@ -71,7 +69,6 @@ public class UsuarioServiceTest {
 
 
     @Test(expected = UsuarioServiceException.class)
-    @Transactional
     public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
         // GIVEN
         // Datos cargados de datos-test.sql
@@ -104,7 +101,6 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     public void servicioConsultaUsuarioDevuelveUsuario() {
         // GIVEN
         // Datos cargados de datos-test.sql
