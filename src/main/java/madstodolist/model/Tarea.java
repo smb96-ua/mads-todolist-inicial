@@ -70,6 +70,10 @@ public class Tarea implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Tarea tarea = (Tarea) o;
+        if (id != null && tarea.id != null)
+            // Si tenemos los ID, comparamos por ID
+            return Objects.equals(id, tarea.id);
+        // sino comparamos por campos obligatorios
         return titulo.equals(tarea.titulo) &&
                 usuario.equals(tarea.usuario);
     }

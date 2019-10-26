@@ -61,6 +61,24 @@ public class TareaTest {
         assertThat(tarea1).isNotEqualTo(tarea3);
     }
 
+    @Test
+    public void comprobarIgualdadConId() {
+        // GIVEN
+
+        Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
+        Tarea tarea1 = new Tarea(usuario, "Práctica 1 de MADS");
+        Tarea tarea2 = new Tarea(usuario, "Práctica 1 de MADS");
+        Tarea tarea3 = new Tarea(usuario, "Pagar el alquiler");
+        tarea1.setId(1L);
+        tarea2.setId(2L);
+        tarea3.setId(1L);
+
+        // THEN
+
+        assertThat(tarea1).isEqualTo(tarea3);
+        assertThat(tarea1).isNotEqualTo(tarea2);
+    }
+
     //
     // Tests TareaRepository
     //
