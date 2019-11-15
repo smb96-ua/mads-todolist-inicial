@@ -24,6 +24,11 @@ public class LoginController {
     @Autowired
     ManagerUserSesion managerUserSesion;
 
+    @GetMapping("/")
+    public String home(Model model) {
+        return "redirect:/login";
+    }
+
     @GetMapping("/login")
     public String loginForm(Model model) {
         model.addAttribute("loginData", new LoginData());
