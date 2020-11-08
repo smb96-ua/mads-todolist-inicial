@@ -27,6 +27,9 @@ public class UsuarioWebTestSinMocks {
 
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
         this.mockMvc.perform(post("/login")
                 .param("eMail", "ana.garcia@gmail.com")
                 .param("password", "12345678"))
@@ -37,6 +40,9 @@ public class UsuarioWebTestSinMocks {
 
     @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
         this.mockMvc.perform(post("/login")
                     .param("eMail","pepito.perez@gmail.com")
                     .param("password","12345678"))
@@ -45,6 +51,9 @@ public class UsuarioWebTestSinMocks {
 
     @Test
     public void servicioLoginUsuarioErrorPassword() throws Exception {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
         this.mockMvc.perform(post("/login")
                     .param("eMail","ana.garcia@gmail.com")
                     .param("password","000"))
@@ -53,6 +62,9 @@ public class UsuarioWebTestSinMocks {
 
     @Test
     public void servicioLoginRedirectContraseñaIncorrecta() throws Exception {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
         this.mockMvc.perform(get("/login")
                 .flashAttr("error", "Contraseña incorrecta"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
@@ -60,6 +72,9 @@ public class UsuarioWebTestSinMocks {
 
     @Test
     public void servicioLoginRedirectUsuarioNotFound() throws Exception {
+        // GIVEN
+        // Datos cargados de datos-test.sql
+
         this.mockMvc.perform(get("/login")
                 .flashAttr("error", "No existe usuario"))
                 .andExpect(content().string(containsString("No existe usuario")));
