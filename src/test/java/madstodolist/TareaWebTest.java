@@ -74,7 +74,7 @@ public class TareaWebTest {
 
     @Test
     public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
-        Usuario usuario = new Usuario("domingo@ua.es");
+        Usuario usuario = new Usuario("Usuario");
         usuario.setId(1L);
 
         when(usuarioService.findById(1L)).thenReturn(usuario);
