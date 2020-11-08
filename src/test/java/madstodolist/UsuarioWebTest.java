@@ -21,6 +21,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+//TODO
+// Modificar los tests de web para que se utilicen el mínimo
+// número de mocks. Estos tests también cargan los datos
+// de la base de datos datos-tests.sql, no hace falta añadir
+// los datos a mano, ni mockear los servicios para que devuelvan
+// los datos que nos interesan.
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -38,13 +45,15 @@ public class UsuarioWebTest {
         Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
         anaGarcia.setId(1L);
 
-        when(usuarioService.login("ana.garcia@gmail.com", "12345678")).thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
-        when(usuarioService.findByEmail("ana.garcia@gmail.com")).thenReturn(anaGarcia);
+        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
+        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
+                .thenReturn(anaGarcia);
 
         this.mockMvc.perform(post("/login")
                 .param("eMail", "ana.garcia@gmail.com")
                 .param("password", "12345678"))
-                .andDo(print())
+                //.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/usuarios/1/tareas"));
     }
@@ -52,25 +61,24 @@ public class UsuarioWebTest {
     @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
 
-        when(usuarioService.login("pepito.perez@gmail.com", "12345678")).thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
+        when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
+                .thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","pepito.perez@gmail.com")
                     .param("password","12345678"))
-                .andDo(print())
                 .andExpect(content().string(containsString("No existe usuario")));
     }
 
     @Test
     public void servicioLoginUsuarioErrorPassword() throws Exception {
 
-        when(usuarioService.login("ana.garcia@gmail.com", "000")).thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
+        when(usuarioService.login("ana.garcia@gmail.com", "000"))
+                .thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","ana.garcia@gmail.com")
                     .param("password","000"))
-                .andDo(print())
-                .andDo(print())
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
 
@@ -78,7 +86,6 @@ public class UsuarioWebTest {
     public void servicioLoginRedirectContraseñaIncorrecta() throws Exception {
         this.mockMvc.perform(get("/login")
                 .flashAttr("error", "Contraseña incorrecta"))
-                .andDo(print())
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
 
@@ -86,7 +93,6 @@ public class UsuarioWebTest {
     public void servicioLoginRedirectUsuarioNotFound() throws Exception {
         this.mockMvc.perform(get("/login")
                 .flashAttr("error", "No existe usuario"))
-                .andDo(print())
                 .andExpect(content().string(containsString("No existe usuario")));
     }
 

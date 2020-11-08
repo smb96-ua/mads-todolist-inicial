@@ -25,6 +25,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+//TODO
+// Modificar los tests de web para que se utilicen el mínimo
+// número de mocks. Estos tests también cargan los datos
+// de la base de datos datos-tests.sql, no hace falta añadir
+// los datos a mano, ni mockear los servicios para que devuelvan
+// los datos que nos interesan.
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -39,6 +46,8 @@ public class TareaWebTest {
     @MockBean
     private TareaService tareaService;
 
+    // Al mocker el manegerUserSession, no lanza la excepción cuando
+    // se intenta comprobar si un usuario está logeado
     @MockBean
     private ManagerUserSesion managerUserSesion;
 
@@ -50,7 +59,7 @@ public class TareaWebTest {
         when(usuarioService.findById(1L)).thenReturn(usuario);
 
         this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
-                .andDo(print())
+                //.andDo(print())
                 .andExpect(content().string(containsString("action=\"/usuarios/1/tareas/nueva\"")));
     }
 
@@ -60,7 +69,6 @@ public class TareaWebTest {
         when(usuarioService.findById(1L)).thenReturn(null);
 
         this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
-                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -90,12 +98,11 @@ public class TareaWebTest {
         when(tareaService.findById(1L)).thenReturn(tarea);
 
         this.mockMvc.perform(get("/tareas/1/editar"))
-                .andDo(print())
                 .andExpect(content().string(allOf(
                     // Contiene la acción para enviar el post a la URL correcta
                     containsString("action=\"/tareas/1/editar\""),
                     // Contiene el texto de la tarea a editar
-                    containsString("Lavar el coche"),
+                    containsString("Lavar coche"),
                     // Contiene enlace a listar tareas del usuario si se cancela la edición
                     containsString("href=\"/usuarios/1/tareas\""))));
     }
