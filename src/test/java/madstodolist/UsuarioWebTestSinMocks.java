@@ -1,14 +1,11 @@
 package madstodolist;
 
-import madstodolist.authentication.ManagerUserSesion;
-import madstodolist.controller.LoginController;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -18,36 +15,18 @@ import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-// Comprobar en UsuarioWebTestSinMocks.java cómo serían
-// estos tests sin mockear el usuarioService. En ese caso
-// se obtienen los datos de la base de datos datos-test.sql,
-// igual que loa tests de servicio.
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UsuarioWebTest {
+public class UsuarioWebTestSinMocks {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UsuarioService usuarioService;
-
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
-
-        Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
-        anaGarcia.setId(1L);
-
-        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
-                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
-        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
-                .thenReturn(anaGarcia);
-
         this.mockMvc.perform(post("/login")
                 .param("eMail", "ana.garcia@gmail.com")
                 .param("password", "12345678"))
@@ -58,10 +37,6 @@ public class UsuarioWebTest {
 
     @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
-
-        when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
-                .thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
-
         this.mockMvc.perform(post("/login")
                     .param("eMail","pepito.perez@gmail.com")
                     .param("password","12345678"))
@@ -70,10 +45,6 @@ public class UsuarioWebTest {
 
     @Test
     public void servicioLoginUsuarioErrorPassword() throws Exception {
-
-        when(usuarioService.login("ana.garcia@gmail.com", "000"))
-                .thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
-
         this.mockMvc.perform(post("/login")
                     .param("eMail","ana.garcia@gmail.com")
                     .param("password","000"))
