@@ -50,7 +50,6 @@ public class TareaController {
                              HttpSession session) {
 
         managerUserSesion.comprobarUsuarioLogeado(session, idUsuario);
-
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
             throw new UsuarioNotFoundException();

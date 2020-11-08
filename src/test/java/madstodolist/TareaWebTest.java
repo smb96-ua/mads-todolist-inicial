@@ -18,11 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -42,7 +43,7 @@ public class TareaWebTest {
     private ManagerUserSesion managerUserSesion;
 
     @Test
-    public void nuevaTareaDevuelveForm() throws Exception {
+    public void getNuevaTareaDevuelveForm() throws Exception {
         Usuario usuario = new Usuario("domingo@ua.es");
         usuario.setId(1L);
 
@@ -54,13 +55,30 @@ public class TareaWebTest {
     }
 
     @Test
-    public void nuevaTareaDevuelveNotFound() throws Exception {
+    public void getNuevaTareaDevuelveNotFound() throws Exception {
 
         when(usuarioService.findById(1L)).thenReturn(null);
 
         this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
                 .andDo(print())
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
+        Usuario usuario = new Usuario("domingo@ua.es");
+        usuario.setId(1L);
+
+        when(usuarioService.findById(1L)).thenReturn(usuario);
+
+        this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
+                    .param("titulo", "Estudiar examen MADS"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(redirectedUrl("/usuarios/1/tareas"));
+
+        // Verificamos que se ha añadido el método para
+        // añadir una tarea con los parámetros correctos
+        verify(tareaService).nuevaTareaUsuario(1L, "Estudiar examen MADS");
     }
 
     @Test
