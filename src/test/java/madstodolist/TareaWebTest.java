@@ -102,7 +102,7 @@ public class TareaWebTest {
                     // Contiene la acción para enviar el post a la URL correcta
                     containsString("action=\"/tareas/1/editar\""),
                     // Contiene el texto de la tarea a editar
-                    containsString("Lavar coche"),
+                    containsString("Lavar el coche"),
                     // Contiene enlace a listar tareas del usuario si se cancela la edición
                     containsString("href=\"/usuarios/1/tareas\""))));
     }
