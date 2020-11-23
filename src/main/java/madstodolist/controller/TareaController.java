@@ -56,6 +56,10 @@ public class TareaController {
         }
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
+        // TODO
+        // Modificar los controllers para que no devuelvan un redirect,
+        // sino la propia vista 'listaTareas'. Extraer todo el código común en alguna
+        // función privada.
         return "redirect:/usuarios/" + idUsuario + "/tareas";
     }
 
