@@ -55,12 +55,9 @@ public class TareaController {
             throw new UsuarioNotFoundException();
         }
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
-        flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
-        // TODO
-        // Modificar los controllers para que no devuelvan un redirect,
-        // sino la propia vista 'listaTareas'. Extraer todo el código común en alguna
-        // función privada.
-        return "redirect:/usuarios/" + idUsuario + "/tareas";
+        // TODO: Modificar la plantilla para que acepte mensajes y enviar el mensaje
+        // 'Tarea creada correctamente'
+        return devuelvePlantillaListaTareas(usuario, model);
     }
 
     @GetMapping("/usuarios/{id}/tareas")
@@ -72,10 +69,7 @@ public class TareaController {
         if (usuario == null) {
             throw new UsuarioNotFoundException();
         }
-        List<Tarea> tareas = tareaService.allTareasUsuario(idUsuario);
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("tareas", tareas);
-        return "listaTareas";
+        return devuelvePlantillaListaTareas(usuario, model);
     }
 
     @GetMapping("/tareas/{id}/editar")
@@ -103,10 +97,14 @@ public class TareaController {
         }
 
         managerUserSesion.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
+        Long idUsuario = tarea.getUsuario().getId();
 
+        Usuario usuario = usuarioService.findById(idUsuario);
+        if (usuario == null) {
+            throw new UsuarioNotFoundException();
+        }
         tareaService.modificaTarea(idTarea, tareaData.getTitulo());
-        flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
-        return "redirect:/usuarios/" + tarea.getUsuario().getId() + "/tareas";
+        return devuelvePlantillaListaTareas(usuario, model);
     }
 
     @DeleteMapping("/tareas/{id}")
@@ -123,6 +121,13 @@ public class TareaController {
 
         tareaService.borraTarea(idTarea);
         return "";
+    }
+
+    private String devuelvePlantillaListaTareas(Usuario usuario, Model model) {
+        List<Tarea> tareas = tareaService.allTareasUsuario(usuario.getId());
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("tareas", tareas);
+        return "listaTareas";
     }
 }
 
