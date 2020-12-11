@@ -18,11 +18,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-// Comprobar en UsuarioWebTestSinMocks.java cómo serían
-// estos tests sin mockear el usuarioService. En ese caso
-// se obtienen los datos de la base de datos datos-test.sql,
-// igual que loa tests de servicio.
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -31,19 +26,10 @@ public class UsuarioWebTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UsuarioService usuarioService;
-
-    @Test
+  @Test
     public void servicioLoginUsuarioOK() throws Exception {
-
-        Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
-        anaGarcia.setId(1L);
-
-        when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
-                .thenReturn(UsuarioService.LoginStatus.LOGIN_OK);
-        when(usuarioService.findByEmail("ana.garcia@gmail.com"))
-                .thenReturn(anaGarcia);
+      // GIVEN
+      // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/login")
                 .param("eMail", "ana.garcia@gmail.com")
@@ -55,9 +41,8 @@ public class UsuarioWebTest {
 
     @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
-
-        when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
-                .thenReturn(UsuarioService.LoginStatus.USER_NOT_FOUND);
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","pepito.perez@gmail.com")
@@ -67,9 +52,8 @@ public class UsuarioWebTest {
 
     @Test
     public void servicioLoginUsuarioErrorPassword() throws Exception {
-
-        when(usuarioService.login("ana.garcia@gmail.com", "000"))
-                .thenReturn(UsuarioService.LoginStatus.ERROR_PASSWORD);
+        // GIVEN
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/login")
                     .param("eMail","ana.garcia@gmail.com")
