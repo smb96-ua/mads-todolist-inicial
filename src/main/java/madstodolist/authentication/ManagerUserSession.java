@@ -5,10 +5,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpSession;
 
 // TODO
-// - Cambiar el nombre a ManagerUserSession
 // - Añadir un método que devuelva el usuario logeado
 @Component
-public class ManagerUserSesion {
+public class ManagerUserSession {
 
     // Añadimos el id de usuario en la sesión HTTP para hacer
     // una autorización sencilla. En los métodos de controllers

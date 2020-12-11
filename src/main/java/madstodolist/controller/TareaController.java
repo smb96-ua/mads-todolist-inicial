@@ -1,6 +1,6 @@
 package madstodolist.controller;
 
-import madstodolist.authentication.ManagerUserSesion;
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.TareaNotFoundException;
 import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Tarea;
@@ -26,7 +26,7 @@ public class TareaController {
     TareaService tareaService;
 
     @Autowired
-    ManagerUserSesion managerUserSesion;
+    ManagerUserSession managerUserSession;
 
 
     @GetMapping("/usuarios/{id}/tareas/nueva")
@@ -34,7 +34,7 @@ public class TareaController {
                                  @ModelAttribute TareaData tareaData, Model model,
                                  HttpSession session) {
 
-        managerUserSesion.comprobarUsuarioLogeado(session, idUsuario);
+        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
@@ -49,7 +49,7 @@ public class TareaController {
                              Model model, RedirectAttributes flash,
                              HttpSession session) {
 
-        managerUserSesion.comprobarUsuarioLogeado(session, idUsuario);
+        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
             throw new UsuarioNotFoundException();
@@ -63,7 +63,7 @@ public class TareaController {
     @GetMapping("/usuarios/{id}/tareas")
     public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
 
-        managerUserSesion.comprobarUsuarioLogeado(session, idUsuario);
+        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
@@ -81,7 +81,7 @@ public class TareaController {
             throw new TareaNotFoundException();
         }
 
-        managerUserSesion.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
+        managerUserSession.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
 
         model.addAttribute("tarea", tarea);
         tareaData.setTitulo(tarea.getTitulo());
@@ -96,7 +96,7 @@ public class TareaController {
             throw new TareaNotFoundException();
         }
 
-        managerUserSesion.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
+        managerUserSession.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
         Long idUsuario = tarea.getUsuario().getId();
 
         Usuario usuario = usuarioService.findById(idUsuario);
@@ -117,7 +117,7 @@ public class TareaController {
             throw new TareaNotFoundException();
         }
 
-        managerUserSesion.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
+        managerUserSession.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
 
         tareaService.borraTarea(idTarea);
         return "";

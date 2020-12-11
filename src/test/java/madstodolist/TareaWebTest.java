@@ -1,7 +1,6 @@
 package madstodolist;
 
-import madstodolist.authentication.ManagerUserSesion;
-import madstodolist.controller.TareaController;
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -10,7 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -49,7 +47,7 @@ public class TareaWebTest {
     // Al mocker el manegerUserSession, no lanza la excepción cuando
     // se intenta comprobar si un usuario está logeado
     @MockBean
-    private ManagerUserSesion managerUserSesion;
+    private ManagerUserSession managerUserSession;
 
     @Test
     public void getNuevaTareaDevuelveForm() throws Exception {

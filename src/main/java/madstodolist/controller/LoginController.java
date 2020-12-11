@@ -1,6 +1,6 @@
 package madstodolist.controller;
 
-import madstodolist.authentication.ManagerUserSesion;
+import madstodolist.authentication.ManagerUserSession;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class LoginController {
     UsuarioService usuarioService;
 
     @Autowired
-    ManagerUserSesion managerUserSesion;
+    ManagerUserSession managerUserSession;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -44,7 +44,7 @@ public class LoginController {
         if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
             Usuario usuario = usuarioService.findByEmail(loginData.geteMail());
 
-            managerUserSesion.logearUsuario(session, usuario.getId());
+            managerUserSession.logearUsuario(session, usuario.getId());
 
             return "redirect:/usuarios/" + usuario.getId() + "/tareas";
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
