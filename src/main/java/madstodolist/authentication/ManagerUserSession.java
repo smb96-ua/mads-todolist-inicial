@@ -4,8 +4,6 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
 
-// TODO
-// - Añadir un método que devuelva el usuario logeado
 @Component
 public class ManagerUserSession {
 
@@ -17,9 +15,18 @@ public class ManagerUserSession {
         session.setAttribute("idUsuarioLogeado", idUsuario);
     }
 
-    public void comprobarUsuarioLogeado(HttpSession session, Long idUsuario) {
+    public void logout(HttpSession session) {
+        session.setAttribute("idUsuarioLogeado", null);
+    }
+
+    public boolean comprobarUsuarioLogeado(HttpSession session, Long idUsuario) {
         Long idUsuarioLogeado = (Long) session.getAttribute("idUsuarioLogeado");
         if (!idUsuario.equals(idUsuarioLogeado))
             throw new UsuarioNoLogeadoException();
+        return true;
+    }
+
+    public Long usuarioLogeado(HttpSession session) {
+        return (Long) session.getAttribute("idUsuarioLogeado");
     }
 }

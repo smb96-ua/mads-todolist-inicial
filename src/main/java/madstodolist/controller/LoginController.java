@@ -36,7 +36,7 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String loginSubmit(@ModelAttribute LoginData loginData, Model model, RedirectAttributes flash, HttpSession session) {
+    public String loginSubmit(@ModelAttribute LoginData loginData, Model model, HttpSession session) {
 
         // Llamada al servicio para comprobar si el login es correcto
         UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
@@ -87,7 +87,7 @@ public class LoginController {
 
    @GetMapping("/logout")
    public String logout(HttpSession session) {
-        session.setAttribute("idUsuarioLogeado", null);
+        managerUserSession.logout(session);
         return "redirect:/login";
    }
 }

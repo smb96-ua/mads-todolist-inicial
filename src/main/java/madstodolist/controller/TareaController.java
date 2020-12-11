@@ -50,6 +50,7 @@ public class TareaController {
                              HttpSession session) {
 
         managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
+
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
             throw new UsuarioNotFoundException();
@@ -96,8 +97,9 @@ public class TareaController {
             throw new TareaNotFoundException();
         }
 
-        managerUserSession.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
         Long idUsuario = tarea.getUsuario().getId();
+
+        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
