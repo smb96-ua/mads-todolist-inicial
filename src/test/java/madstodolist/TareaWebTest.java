@@ -53,7 +53,8 @@ public class TareaWebTest {
 
         this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
                     .param("titulo", "Estudiar examen MADS"))
-                    .andExpect(content().string(containsString("Estudiar examen MADS")));
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(redirectedUrl("/usuarios/1/tareas"));
     }
 
     @Test
