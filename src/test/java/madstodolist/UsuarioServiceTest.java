@@ -3,18 +3,16 @@ package madstodolist;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import madstodolist.service.UsuarioServiceException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class UsuarioServiceTest {
 
@@ -60,27 +58,32 @@ public class UsuarioServiceTest {
         assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
     }
 
-    @Test(expected = UsuarioServiceException.class)
     public void servicioRegistroUsuarioExcepcionConNullPassword() {
         // Pasamos como argumento un usario sin contraseña
         Usuario usuario =  new Usuario("usuario.prueba@gmail.com");
-        usuarioService.registrar(usuario);
+
+        // Se produce una excempción de tipo UsuarioServiceException
+        Assertions.assertThrows(UsuarioServiceException.class, () -> {
+            usuarioService.registrar(usuario);
+        });
     }
 
 
-    @Test(expected = UsuarioServiceException.class)
+    @Test
     public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
         // GIVEN
         // Datos cargados de datos-test.sql
 
-        // WHEN
+        // WHEN - THEN
         // Pasamos como argumento un usario con emaii existente en datos-test.sql
         Usuario usuario =  new Usuario("ana.garcia@gmail.com");
         usuario.setPassword("12345678");
-        usuarioService.registrar(usuario);
 
-        // THEN
-        // Se produce una excepción comprobada con el expected del test
+
+        // Se produce una excempción de tipo UsuarioServiceException
+        Assertions.assertThrows(UsuarioServiceException.class, () -> {
+            usuarioService.registrar(usuario);
+        });
     }
 
     @Test

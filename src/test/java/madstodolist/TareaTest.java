@@ -5,19 +5,16 @@ import madstodolist.model.Tarea;
 import madstodolist.model.TareaRepository;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
-@RunWith(SpringRunner.class)
 @SpringBootTest
 public class TareaTest {
 
@@ -103,7 +100,7 @@ public class TareaTest {
         assertThat(tarea.getTitulo()).isEqualTo("Práctica 1 de MADS");
     }
 
-    @Test(expected = Exception.class)
+    @Test
     @Transactional
     public void salvarTareaEnBaseDatosConUsuarioNoBDLanzaExcepcion() {
         // GIVEN
@@ -112,12 +109,11 @@ public class TareaTest {
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
         Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
 
-        // WHEN
-
-        tareaRepository.save(tarea);
-
-        // THEN
-        // Se lanza una excepción (capturada en el test)
+        // WHEN // THEN
+        // Se lanza una excepción al intentar salvar un usuario sin ID
+        Assertions.assertThrows(Exception.class, () -> {
+            tareaRepository.save(tarea);
+        });
     }
 
     @Test
