@@ -30,6 +30,7 @@ public class TareaService {
 
     @Transactional
     public Tarea nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
+        logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
@@ -41,6 +42,7 @@ public class TareaService {
 
     @Transactional(readOnly = true)
     public List<Tarea> allTareasUsuario(Long idUsuario) {
+        logger.debug("Devolviendo todas las tareas del usuario " + idUsuario);
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
@@ -52,11 +54,13 @@ public class TareaService {
 
     @Transactional(readOnly = true)
     public Tarea findById(Long tareaId) {
+        logger.debug("Buscando tarea " + tareaId);
         return tareaRepository.findById(tareaId).orElse(null);
     }
 
     @Transactional
     public Tarea modificaTarea(Long idTarea, String nuevoTitulo) {
+        logger.debug("Modificando tarea " + idTarea + " - " + nuevoTitulo);
         Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
         if (tarea == null) {
             throw new TareaServiceException("No existe tarea con id " + idTarea);
@@ -68,6 +72,7 @@ public class TareaService {
 
     @Transactional
     public void borraTarea(Long idTarea) {
+        logger.debug("Borrando tarea " + idTarea);
         Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
         if (tarea == null) {
             throw new TareaServiceException("No existe tarea con id " + idTarea);
