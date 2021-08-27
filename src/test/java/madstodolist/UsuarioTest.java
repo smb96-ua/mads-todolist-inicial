@@ -74,7 +74,7 @@ public class UsuarioTest {
         // THEN
         assertThat(usuario).isNotNull();
         assertThat(usuario.getId()).isEqualTo(1L);
-        assertThat(usuario.getNombre()).isEqualTo("Ana García");
+        assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
     }
 
     @Test
@@ -84,10 +84,10 @@ public class UsuarioTest {
         // Datos cargados de datos-test.sql
 
         // WHEN
-        Usuario usuario = usuarioRepository.findByEmail("ana.garcia@gmail.com").orElse(null);
+        Usuario usuario = usuarioRepository.findByEmail("user@ua").orElse(null);
 
         // THEN
-        assertThat(usuario.getNombre()).isEqualTo("Ana García");
+        assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
     }
 
 

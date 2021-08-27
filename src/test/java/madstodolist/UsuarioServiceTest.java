@@ -28,8 +28,8 @@ public class UsuarioServiceTest {
 
         // WHEN
 
-        UsuarioService.LoginStatus loginStatusOK = usuarioService.login("ana.garcia@gmail.com", "12345678");
-        UsuarioService.LoginStatus loginStatusErrorPassword = usuarioService.login("ana.garcia@gmail.com", "000");
+        UsuarioService.LoginStatus loginStatusOK = usuarioService.login("user@ua", "123");
+        UsuarioService.LoginStatus loginStatusErrorPassword = usuarioService.login("user@ua", "000");
         UsuarioService.LoginStatus loginStatusNoUsuario = usuarioService.login("pepito.perez@gmail.com", "12345678");
 
         // THEN
@@ -76,7 +76,7 @@ public class UsuarioServiceTest {
 
         // WHEN - THEN
         // Pasamos como argumento un usario con emaii existente en datos-test.sql
-        Usuario usuario =  new Usuario("ana.garcia@gmail.com");
+        Usuario usuario =  new Usuario("user@ua");
         usuario.setPassword("12345678");
 
 
@@ -110,7 +110,7 @@ public class UsuarioServiceTest {
 
         // WHEN
 
-        Usuario usuario = usuarioService.findByEmail("ana.garcia@gmail.com");
+        Usuario usuario = usuarioService.findByEmail("user@ua");
 
         // THEN
 

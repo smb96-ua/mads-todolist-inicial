@@ -35,7 +35,7 @@ public class TareaServiceTest {
 
         // THEN
 
-        Usuario usuario = usuarioService.findByEmail("ana.garcia@gmail.com");
+        Usuario usuario = usuarioService.findByEmail("user@ua");
         assertThat(usuario.getTareas()).contains(tarea);
     }
 
