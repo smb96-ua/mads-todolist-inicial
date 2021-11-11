@@ -22,10 +22,12 @@ public class UsuarioWebTest {
     @Autowired
     private MockMvc mockMvc;
 
+    // Moqueamos el usuarioService;
+    // en los tests deberemos proporcionar el valor devuelto por llamadas
+    // a sus métodos
     @MockBean
     private UsuarioService usuarioService;
 
-    // Ejemplo de test en el que se utiliza un mock
     @Test
     public void servicioLoginUsuarioOK() throws Exception {
 
@@ -40,12 +42,10 @@ public class UsuarioWebTest {
         this.mockMvc.perform(post("/login")
                 .param("eMail", "ana.garcia@gmail.com")
                 .param("password", "12345678"))
-                //.andDo(print())
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/usuarios/1/tareas"));
     }
 
-    // En este test usamos los datos cargados en el fichero de prueba
     @Test
     public void servicioLoginUsuarioNotFound() throws Exception {
         when(usuarioService.login("pepito.perez@gmail.com", "12345678"))
@@ -67,19 +67,4 @@ public class UsuarioWebTest {
                     .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
-
-    @Test
-    public void servicioLoginRedirectContraseñaIncorrecta() throws Exception {
-        this.mockMvc.perform(get("/login")
-                .flashAttr("error", "Contraseña incorrecta"))
-                .andExpect(content().string(containsString("Contraseña incorrecta")));
-    }
-
-    @Test
-    public void servicioLoginRedirectUsuarioNotFound() throws Exception {
-        this.mockMvc.perform(get("/login")
-                .flashAttr("error", "No existe usuario"))
-                .andExpect(content().string(containsString("No existe usuario")));
-    }
-
 }

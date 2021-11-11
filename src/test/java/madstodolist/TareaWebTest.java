@@ -11,9 +11,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -27,35 +27,42 @@ public class TareaWebTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    // Declaramos los servicios como Autowired y usamos los datos
+    // de prueba de la base de datos
+    @Autowired
     private UsuarioService usuarioService;
 
-    @MockBean
+    @Autowired
     private TareaService tareaService;
 
-    // Al mocker el manegerUserSession, no lanza la excepción cuando
-    // se intenta comprobar si un usuario está logeado
+    // Al moquear el manegerUserSession, no lanza la excepción cuando
+    // en los controllers se llama a comprobarUsuarioLogeado y se intenta comprobar
+    // si un usuario está logeado
     @MockBean
     private ManagerUserSession managerUserSession;
 
     @Test
-    public void getNuevaTareaDevuelveForm() throws Exception {
-        Usuario usuario = new Usuario("domingo@ua.es");
-        usuario.setId(1L);
+    public void listaTareas() throws Exception {
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
-        when(usuarioService.findById(1L)).thenReturn(usuario);
+        this.mockMvc.perform(get("/usuarios/1/tareas"))
+                .andExpect((content().string(allOf(
+                        containsString("Lavar coche"),
+                        containsString("Renovar DNI")
+                ))));
+    }
+
+    @Test
+    public void getNuevaTareaDevuelveForm() throws Exception {
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
                 .andExpect(content().string(containsString("action=\"/usuarios/1/tareas/nueva\"")));
     }
 
-    // En este test usamos los datos cargados en el fichero de prueba
     @Test
     public void postNuevaTareaDevuelveListaConTarea() throws Exception {
-        Usuario usuario = new Usuario("domingo@ua.es");
-        usuario.setId(1L);
-
-        when(usuarioService.findById(1L)).thenReturn(usuario);
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
                     .param("titulo", "Estudiar examen MADS"))
@@ -65,48 +72,37 @@ public class TareaWebTest {
 
     @Test
     public void getNuevaTareaDevuelveNotFoundCuandoNoExisteUsuario() throws Exception {
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
-        when(usuarioService.findById(1L)).thenReturn(null);
-
-        this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
+        this.mockMvc.perform(get("/usuarios/2/tareas/nueva"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void editarTareaDevuelveForm() throws Exception {
-        Tarea tarea = new Tarea(new Usuario("domingo@ua.es"), "Tarea de prueba");
-        tarea.setId(1L);
-        tarea.getUsuario().setId(1L);
-
-        when(tareaService.findById(1L)).thenReturn(tarea);
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(get("/tareas/1/editar"))
                 .andExpect(content().string(allOf(
                     // Contiene la acción para enviar el post a la URL correcta
                     containsString("action=\"/tareas/1/editar\""),
                     // Contiene el texto de la tarea a editar
-                    containsString("Tarea de prueba"),
+                    containsString("Lavar coche"),
                     // Contiene enlace a listar tareas del usuario si se cancela la edición
                     containsString("href=\"/usuarios/1/tareas\""))));
     }
 
-    // Usamos el mock para verificar que se ha llamado al método de añadir una tarea
     @Test
+    @Transactional
     public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
-        Usuario usuario = new Usuario("Usuario");
-        usuario.setId(1L);
-
-        when(usuarioService.findById(1L)).thenReturn(usuario);
-
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
                 .param("titulo", "Estudiar examen MADS"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/usuarios/1/tareas"));
 
-        // Verificamos que se ha llamado al método para
-        // añadir una tarea con los parámetros correctos
-
-        verify(tareaService).nuevaTareaUsuario(1L, "Estudiar examen MADS");
+        this.mockMvc.perform(get("/usuarios/1/tareas"))
+                .andExpect((content().string(containsString("Estudiar examen MADS"))));
     }
 }
