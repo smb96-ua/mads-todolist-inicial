@@ -44,11 +44,12 @@ public class TareaServiceTest {
         // GIVEN
         // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
-        Usuario usuario = new Usuario("ana.garcia@gmail.com");
+        Usuario usuario = new Usuario("");
         usuario.setId(1L);
 
         Tarea lavarCoche = new Tarea(usuario, "Lavar coche");
         lavarCoche.setId(1L);
+
 
         // WHEN
 
