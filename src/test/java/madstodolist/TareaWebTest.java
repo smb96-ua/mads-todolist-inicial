@@ -16,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -61,13 +60,36 @@ public class TareaWebTest {
     }
 
     @Test
-    public void postNuevaTareaDevuelveListaConTarea() throws Exception {
+    @Transactional
+    public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
         // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
-                    .param("titulo", "Estudiar examen MADS"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(redirectedUrl("/usuarios/1/tareas"));
+                        .param("titulo", "Estudiar examen MADS"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/usuarios/1/tareas"));
+
+        this.mockMvc.perform(get("/usuarios/1/tareas"))
+                .andExpect((content().string(containsString("Estudiar examen MADS"))));
+    }
+
+    @Test
+    // No pongo @Transactional porque deshace el delete y no podemos comprobar
+    // que la tarea se ha borrado
+    public void deleteTareaDevuelveOKyBorraTarea() throws Exception {
+        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+
+        // La petición nos devuelve OK
+        this.mockMvc.perform(delete("/tareas/1"))
+                .andExpect(status().isOk());
+
+        // Y se pide un listado y se comprueba que la tarea 1 ya no aparece
+        this.mockMvc.perform(get("/usuarios/1/tareas"))
+                .andExpect(content().string(
+                        allOf(not(containsString("Lavar coche")),
+                                containsString("Renovar DNI"))));
+
+        // TODO: Arreglar que se puedan volver a lanzar todos los tests juntos
     }
 
     @Test
@@ -90,19 +112,5 @@ public class TareaWebTest {
                     containsString("Lavar coche"),
                     // Contiene enlace a listar tareas del usuario si se cancela la edición
                     containsString("href=\"/usuarios/1/tareas\""))));
-    }
-
-    @Test
-    @Transactional
-    public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
-
-        this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
-                .param("titulo", "Estudiar examen MADS"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/usuarios/1/tareas"));
-
-        this.mockMvc.perform(get("/usuarios/1/tareas"))
-                .andExpect((content().string(containsString("Estudiar examen MADS"))));
     }
 }
