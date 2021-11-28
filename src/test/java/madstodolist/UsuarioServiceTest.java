@@ -9,14 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
+@Sql("/datos-test.sql")
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class UsuarioServiceTest {
-
-    Logger logger = LoggerFactory.getLogger(UsuarioServiceTest.class);
 
     @Autowired
     private UsuarioService usuarioService;
@@ -24,7 +26,7 @@ public class UsuarioServiceTest {
     @Test
     public void servicioLoginUsuario() {
         // GIVEN
-        // Datos cargados de datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
 
@@ -40,7 +42,6 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @Transactional
     public void servicioRegistroUsuario() {
         // GIVEN
 
@@ -72,7 +73,7 @@ public class UsuarioServiceTest {
     @Test
     public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
         // GIVEN
-        // Datos cargados de datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN - THEN
         // Pasamos como argumento un usario con emaii existente en datos-test.sql
@@ -87,7 +88,6 @@ public class UsuarioServiceTest {
     }
 
     @Test
-    @Transactional
     public void servicioRegistroUsuarioDevuelveUsuarioConId() {
         // GIVEN
 
@@ -106,7 +106,7 @@ public class UsuarioServiceTest {
     @Test
     public void servicioConsultaUsuarioDevuelveUsuario() {
         // GIVEN
-        // Datos cargados de datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
 

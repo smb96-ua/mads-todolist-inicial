@@ -8,13 +8,16 @@ import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
+@Sql("/datos-test.sql")
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class TareaServiceTest {
 
     @Autowired
@@ -25,10 +28,9 @@ public class TareaServiceTest {
 
 
     @Test
-    @Transactional
     public void testNuevaTareaUsuario() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
         Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Práctica 1 de MADS");
@@ -42,7 +44,7 @@ public class TareaServiceTest {
     @Test
     public void testListadoTareas() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         Usuario usuario = new Usuario("");
         usuario.setId(1L);
@@ -64,7 +66,7 @@ public class TareaServiceTest {
     @Test
     public void testBuscarTarea() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
 
@@ -77,10 +79,9 @@ public class TareaServiceTest {
     }
 
     @Test
-    @Transactional
     public void testModificarTarea() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Pagar el recibo");
         Long idNuevaTarea = tarea.getId();
@@ -97,7 +98,6 @@ public class TareaServiceTest {
     }
 
     @Test
-    @Transactional
     public void testBorrarTarea() {
         // GIVEN
 

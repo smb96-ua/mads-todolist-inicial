@@ -5,13 +5,17 @@ import madstodolist.model.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
+@Sql("/datos-test.sql")
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class UsuarioTest {
 
     @Autowired
@@ -38,7 +42,6 @@ public class UsuarioTest {
     }
 
     @Test
-    @Transactional
     public void crearUsuarioBaseDatos() throws Exception {
 
         // GIVEN
@@ -62,10 +65,9 @@ public class UsuarioTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     public void buscarUsuarioEnBaseDatos() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
 
@@ -78,10 +80,9 @@ public class UsuarioTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     public void buscarUsuarioPorEmail() {
         // GIVEN
-        // Datos cargados de datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
         Usuario usuario = usuarioRepository.findByEmail("user@ua").orElse(null);

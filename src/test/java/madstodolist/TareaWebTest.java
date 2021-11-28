@@ -1,8 +1,6 @@
 package madstodolist;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.model.Tarea;
-import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -10,17 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Sql("/datos-test.sql")
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class TareaWebTest {
 
     @Autowired
@@ -42,7 +41,7 @@ public class TareaWebTest {
 
     @Test
     public void listaTareas() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(get("/usuarios/1/tareas"))
                 .andExpect((content().string(allOf(
@@ -53,16 +52,15 @@ public class TareaWebTest {
 
     @Test
     public void getNuevaTareaDevuelveForm() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
                 .andExpect(content().string(containsString("action=\"/usuarios/1/tareas/nueva\"")));
     }
 
     @Test
-    @Transactional
     public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
                         .param("titulo", "Estudiar examen MADS"))
@@ -74,10 +72,8 @@ public class TareaWebTest {
     }
 
     @Test
-    // No pongo @Transactional porque deshace el delete y no podemos comprobar
-    // que la tarea se ha borrado
     public void deleteTareaDevuelveOKyBorraTarea() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         // La petición nos devuelve OK
         this.mockMvc.perform(delete("/tareas/1"))
@@ -88,13 +84,11 @@ public class TareaWebTest {
                 .andExpect(content().string(
                         allOf(not(containsString("Lavar coche")),
                                 containsString("Renovar DNI"))));
-
-        // TODO: Arreglar que se puedan volver a lanzar todos los tests juntos
     }
 
     @Test
     public void getNuevaTareaDevuelveNotFoundCuandoNoExisteUsuario() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(get("/usuarios/2/tareas/nueva"))
                 .andExpect(status().isNotFound());
@@ -102,7 +96,7 @@ public class TareaWebTest {
 
     @Test
     public void editarTareaDevuelveForm() throws Exception {
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         this.mockMvc.perform(get("/tareas/1/editar"))
                 .andExpect(content().string(allOf(

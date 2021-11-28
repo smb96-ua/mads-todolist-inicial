@@ -9,13 +9,16 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
+@Sql("/datos-test.sql")
+@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class TareaTest {
 
     @Autowired
@@ -81,10 +84,9 @@ public class TareaTest {
     //
 
     @Test
-    @Transactional
     public void crearTareaEnBaseDatos() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         Usuario usuario = usuarioRepository.findById(1L).orElse(null);
         Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
@@ -101,7 +103,6 @@ public class TareaTest {
     }
 
     @Test
-    @Transactional
     public void salvarTareaEnBaseDatosConUsuarioNoBDLanzaExcepcion() {
         // GIVEN
         // Creamos un usuario sin ID y, por tanto, sin estar en gestionado
@@ -117,10 +118,9 @@ public class TareaTest {
     }
 
     @Test
-    @Transactional(readOnly = true)
     public void unUsuarioTieneUnaListaDeTareas() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         Usuario usuario = usuarioRepository.findById(1L).orElse(null);
 
@@ -133,10 +133,9 @@ public class TareaTest {
     }
 
     @Test
-    @Transactional
     public void unaTareaNuevaSeAñadeALaListaDeTareas() {
         // GIVEN
-        // En el application.properties se cargan los datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql
 
         Usuario usuario = usuarioRepository.findById(1L).orElse(null);
 
