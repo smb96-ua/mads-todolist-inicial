@@ -41,7 +41,12 @@ public class TareaWebTest {
 
     @Test
     public void listaTareas() throws Exception {
-        // Cargados datos de prueba del fichero datos-test.sql
+        // GIVEN
+        // Cargados datos de prueba del fichero datos-test.sql,
+
+        // WHEN, THEN
+        // se realiza la petición GET al listado de tareas de un usuario,
+        // el HTML devuelto contiene las descripciones de sus tareas.
 
         this.mockMvc.perform(get("/usuarios/1/tareas"))
                 .andExpect((content().string(allOf(
@@ -52,20 +57,38 @@ public class TareaWebTest {
 
     @Test
     public void getNuevaTareaDevuelveForm() throws Exception {
-        // Cargados datos de prueba del fichero datos-test.sql
+        // GIVEN
+        // Cargados datos de prueba del fichero datos-test.sql,
+
+        // WHEN, THEN
+        // si ejecutamos una petición GET para crear una nueva tarea de un usuario,
+        // el HTML resultante contiene un formulario y la ruta con
+        // la acción para crear la nueva tarea.
 
         this.mockMvc.perform(get("/usuarios/1/tareas/nueva"))
-                .andExpect(content().string(containsString("action=\"/usuarios/1/tareas/nueva\"")));
+                .andExpect((content().string(allOf(
+                        containsString("form method=\"post\""),
+                        containsString("action=\"/usuarios/1/tareas/nueva\"")
+                ))));
     }
 
     @Test
     public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
-        // Cargados datos de prueba del fichero datos-test.sql
+        // GIVEN
+        // Cargados datos de prueba del fichero datos-test.sql,
+
+        // WHEN, THEN
+        // realizamos la petición POST para añadir una nueva tarea,
+        // el estado HTTP que se devuelve es un REDIRECT al listado
+        // de tareas.
 
         this.mockMvc.perform(post("/usuarios/1/tareas/nueva")
                         .param("titulo", "Estudiar examen MADS"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/usuarios/1/tareas"));
+
+        // y si después consultamos el listado de tareas con una petición
+        // GET el HTML contiene la tarea añadida.
 
         this.mockMvc.perform(get("/usuarios/1/tareas"))
                 .andExpect((content().string(containsString("Estudiar examen MADS"))));
@@ -73,13 +96,18 @@ public class TareaWebTest {
 
     @Test
     public void deleteTareaDevuelveOKyBorraTarea() throws Exception {
-        // Cargados datos de prueba del fichero datos-test.sql
+        // GIVEN
+        // Cargados datos de prueba del fichero datos-test.sql,
 
-        // La petición nos devuelve OK
+        // WHEN, THEN
+        // realizamos la petición DELETE para borrar una tarea,
+        // se devuelve el estado HTTP que se devuelve es OK,
+
         this.mockMvc.perform(delete("/tareas/1"))
                 .andExpect(status().isOk());
 
-        // Y se pide un listado y se comprueba que la tarea 1 ya no aparece
+        // y cuando se pide un listado de tareas del usuario, la tarea borrada ya no aparece.
+
         this.mockMvc.perform(get("/usuarios/1/tareas"))
                 .andExpect(content().string(
                         allOf(not(containsString("Lavar coche")),
@@ -88,7 +116,12 @@ public class TareaWebTest {
 
     @Test
     public void getNuevaTareaDevuelveNotFoundCuandoNoExisteUsuario() throws Exception {
-        // Cargados datos de prueba del fichero datos-test.sql
+        // GIVEN
+        // Cargados datos de prueba del fichero datos-test.sql,
+
+        // WHEN, THEN
+        // si realizamos una petición GET para crear una nueva tarea de
+        // un usuario no existente se devuelve el estado HTTP NOT_FOUND.
 
         this.mockMvc.perform(get("/usuarios/2/tareas/nueva"))
                 .andExpect(status().isNotFound());
@@ -96,15 +129,20 @@ public class TareaWebTest {
 
     @Test
     public void editarTareaDevuelveForm() throws Exception {
-        // Cargados datos de prueba del fichero datos-test.sql
+        // GIVEN
+        // Cargados datos de prueba del fichero datos-test.sql,
+
+        // WHEN, THEN
+        // realizamos una petición GET al endpoint para editar una tarea
+        // el HTML devuelto
 
         this.mockMvc.perform(get("/tareas/1/editar"))
                 .andExpect(content().string(allOf(
-                    // Contiene la acción para enviar el post a la URL correcta
+                    // contiene la acción para enviar el post a la URL correcta,
                     containsString("action=\"/tareas/1/editar\""),
-                    // Contiene el texto de la tarea a editar
+                    // contiene la descripción de la tarea a editar,
                     containsString("Lavar coche"),
-                    // Contiene enlace a listar tareas del usuario si se cancela la edición
+                    // y contiene enlace a listar tareas del usuario si se cancela la edición.
                     containsString("href=\"/usuarios/1/tareas\""))));
     }
 }
