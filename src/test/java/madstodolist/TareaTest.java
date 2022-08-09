@@ -33,7 +33,7 @@ public class TareaTest {
     //
 
     @Test
-    public void crearTarea() throws Exception {
+    public void crearTarea() {
         // GIVEN
         // Creado usuario nuevo,
 
@@ -72,7 +72,7 @@ public class TareaTest {
     }
 
     @Test
-    public void comprobarIgualdadSinId() {
+    public void comprobarIgualdadTareasSinId() {
         // GIVEN
         // Creadas tres tareas sin identificador, y dos de ellas con
         // la misma descripción
@@ -90,14 +90,14 @@ public class TareaTest {
     }
 
     @Test
-    public void comprobarIgualdadConId() {
+    public void comprobarIgualdadTareasConId() {
         // GIVEN
-        // Creadas tres tareas con identificadores y dos de ellas
+        // Creadas tres tareas con distintas descripciones y dos de ellas
         // con el mismo identificador,
 
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
         Tarea tarea1 = new Tarea(usuario, "Práctica 1 de MADS");
-        Tarea tarea2 = new Tarea(usuario, "Práctica 1 de MADS");
+        Tarea tarea2 = new Tarea(usuario, "Lavar la ropa");
         Tarea tarea3 = new Tarea(usuario, "Pagar el alquiler");
         tarea1.setId(1L);
         tarea2.setId(2L);
@@ -128,12 +128,18 @@ public class TareaTest {
         tareaRepository.save(tarea);
 
         // THEN
-        // se actualiza el id de la tarea y la tarea queda guardada en la BD
-        // con ese id.
+        // se actualiza el id de la tarea,
 
         assertThat(tarea.getId()).isNotNull();
+
+        // y con ese identificador se recupera de la base de datos la tarea
+        // con los valores correctos de las propiedades y la relación con
+        // el usuario actualizado también correctamente (la relación entre tarea
+        // y usuario es EAGER).
+
         Tarea tareaBD = tareaRepository.findById(tarea.getId()).orElse(null);
-        assertThat(tareaBD).isEqualTo(tarea);
+        assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
+        assertThat(tareaBD.getUsuario()).isEqualTo(usuario);
     }
 
     @Test
@@ -166,8 +172,7 @@ public class TareaTest {
         // su lista de tareas también se recupera, porque se ha
         // definido la relación de usuario y tareas como EAGER.
 
-        Set<Tarea> tareas = usuario.getTareas();
-        assertThat(tareas).isNotEmpty();
+        assertThat(usuario.getTareas()).hasSize(2);
     }
 
     @Test

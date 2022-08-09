@@ -1,5 +1,6 @@
 package madstodolist;
 
+import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,13 +23,21 @@ public class UsuarioTest {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+
+    //
+    // Tests modelo Usuario en memoria, sin la conexión con la BD
+    //
+
     @Test
     public void crearUsuario() throws Exception {
 
         // GIVEN
+        // Creado un nuevo usuario,
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
 
         // WHEN
+        // actualizamos sus propiedades usando los setters,
+
         usuario.setNombre("Juan Gutiérrez");
         usuario.setPassword("12345678");
 
@@ -35,6 +45,9 @@ public class UsuarioTest {
         usuario.setFechaNacimiento(sdf.parse("1997-02-20"));
 
         // THEN
+        // los valores actualizados quedan guardados en el usuario y se
+        // pueden recuperar con los getters.
+
         assertThat(usuario.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
         assertThat(usuario.getNombre()).isEqualTo("Juan Gutiérrez");
         assertThat(usuario.getPassword()).isEqualTo("12345678");
@@ -42,9 +55,53 @@ public class UsuarioTest {
     }
 
     @Test
-    public void crearUsuarioBaseDatos() throws Exception {
-
+    public void comprobarIgualdadUsuariosSinId() {
         // GIVEN
+        // Creados tres usuarios sin identificador, y dos de ellas con
+        // el mismo e-mail
+
+        Usuario usuario1 = new Usuario("juan.gutierrez@gmail.com");
+        Usuario usuario2 = new Usuario("juan.gutierrez@gmail.com");
+        Usuario usuario3 = new Usuario("ana.gutierrez@gmail.com");
+
+        // THEN
+        // son iguales (Equal) los que tienen el mismo e-mail.
+
+        assertThat(usuario1).isEqualTo(usuario2);
+        assertThat(usuario1).isNotEqualTo(usuario3);
+    }
+
+
+    @Test
+    public void comprobarIgualdadUsuariosConId() {
+        // GIVEN
+        // Creadas tres usuarios con distintos e-mails y dos de ellos
+        // con el mismo identificador,
+
+        Usuario usuario1 = new Usuario("juan.gutierrez@gmail.com");
+        Usuario usuario2 = new Usuario("pedro.gutierrez@gmail.com");
+        Usuario usuario3 = new Usuario("ana.gutierrez@gmail.com");
+
+        usuario1.setId(1L);
+        usuario2.setId(2L);
+        usuario3.setId(1L);
+
+        // THEN
+        // son iguales (Equal) los usuarios que tienen el mismo identificador.
+
+        assertThat(usuario1).isEqualTo(usuario3);
+        assertThat(usuario1).isNotEqualTo(usuario2);
+    }
+
+    //
+    // Tests UsuarioRepository
+    //
+
+    @Test
+    public void crearUsuarioBaseDatos() throws ParseException {
+        // GIVEN
+        // Un usuario nuevo creado sin identificador
+
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
         usuario.setNombre("Juan Gutiérrez");
         usuario.setPassword("12345678");
@@ -53,27 +110,38 @@ public class UsuarioTest {
         usuario.setFechaNacimiento(sdf.parse("1997-02-20"));
 
         // WHEN
+        // se guarda en la base de datos
 
         usuarioRepository.save(usuario);
 
         // THEN
+        // se actualiza el identificador del usuario,
+
         assertThat(usuario.getId()).isNotNull();
-        assertThat(usuario.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
-        assertThat(usuario.getNombre()).isEqualTo("Juan Gutiérrez");
-        assertThat(usuario.getPassword()).isEqualTo("12345678");
-        assertThat(usuario.getFechaNacimiento()).isEqualTo(sdf.parse("1997-02-20"));
+
+        // y con ese identificador se recupera de la base de datos el usuario con
+        // los valores correctos de las propiedades.
+
+        Usuario usuarioBD = usuarioRepository.findById(usuario.getId()).orElse(null);
+        assertThat(usuarioBD.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
+        assertThat(usuarioBD.getNombre()).isEqualTo("Juan Gutiérrez");
+        assertThat(usuarioBD.getPassword()).isEqualTo("12345678");
+        assertThat(usuarioBD.getFechaNacimiento()).isEqualTo(sdf.parse("1997-02-20"));
     }
 
     @Test
     public void buscarUsuarioEnBaseDatos() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql,
 
         // WHEN
+        // se recupera de la base de datos un usuario por su identificador,
 
         Usuario usuario = usuarioRepository.findById(1L).orElse(null);
 
         // THEN
+        // se obtiene el usuario correcto y se recuperan sus propiedades.
+
         assertThat(usuario).isNotNull();
         assertThat(usuario.getId()).isEqualTo(1L);
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
@@ -82,45 +150,16 @@ public class UsuarioTest {
     @Test
     public void buscarUsuarioPorEmail() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql
+        // Cargados datos de prueba del fichero datos-test.sql,
 
         // WHEN
+        // buscamos al usuario por su correo electrónico,
+
         Usuario usuario = usuarioRepository.findByEmail("user@ua").orElse(null);
 
         // THEN
+        // se obtiene el usuario correcto.
+
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
-    }
-
-
-    @Test
-    public void comprobarIgualdadSinId() {
-        // GIVEN
-
-        Usuario usuario1 = new Usuario("mariafernandez@gmail.com");
-        Usuario usuario2 = new Usuario("mariafernandez@gmail.com");
-        Usuario usuario3 = new Usuario("antoniolopez@gmail.com");
-
-        // THEN
-
-        assertThat(usuario1).isEqualTo(usuario1);
-        assertThat(usuario1).isEqualTo(usuario2);
-        assertThat(usuario1).isNotEqualTo(usuario3);
-    }
-
-    @Test
-    public void comprobarIgualdadConId() {
-        // GIVEN
-        Usuario usuario1 = new Usuario("juangutierrez@gmail.com");
-        usuario1.setId(1L);
-
-        Usuario usuario2 = new Usuario("mariafernandez@gmail.com");
-        usuario2.setId(1L);
-
-        Usuario usuario3 = new Usuario("antoniolopez@gmail.com");
-        usuario3.setId(2L);
-
-        // THEN
-        assertThat(usuario1).isEqualTo(usuario2);
-        assertThat(usuario1).isNotEqualTo(usuario3);
     }
 }

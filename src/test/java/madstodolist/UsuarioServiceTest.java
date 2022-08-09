@@ -30,29 +30,42 @@ public class UsuarioServiceTest {
 
         // WHEN
 
-        UsuarioService.LoginStatus loginStatusOK = usuarioService.login("user@ua", "123");
-        UsuarioService.LoginStatus loginStatusErrorPassword = usuarioService.login("user@ua", "000");
-        UsuarioService.LoginStatus loginStatusNoUsuario = usuarioService.login("pepito.perez@gmail.com", "12345678");
+        // intentamos logear un usuario y contraseña correctos
+        UsuarioService.LoginStatus loginStatus1 = usuarioService.login("user@ua", "123");
+
+        // intentamos logear un usuario correcto, con una contraseña incorrecta
+        UsuarioService.LoginStatus loginStatus2 = usuarioService.login("user@ua", "000");
+
+        // intentamos logear un usuario que no existe,
+        UsuarioService.LoginStatus loginStatus3 = usuarioService.login("pepito.perez@gmail.com", "12345678");
 
         // THEN
 
-        assertThat(loginStatusOK).isEqualTo(UsuarioService.LoginStatus.LOGIN_OK);
-        assertThat(loginStatusErrorPassword).isEqualTo(UsuarioService.LoginStatus.ERROR_PASSWORD);
-        assertThat(loginStatusNoUsuario).isEqualTo(UsuarioService.LoginStatus.USER_NOT_FOUND);
+        // el valor devuelto por el primer login es LOGIN_OK,
+        assertThat(loginStatus1).isEqualTo(UsuarioService.LoginStatus.LOGIN_OK);
+
+        // el valor devuelto por el segundo login es ERROR_PASSWORD,
+        assertThat(loginStatus2).isEqualTo(UsuarioService.LoginStatus.ERROR_PASSWORD);
+
+        // y el valor devuelto por el tercer login es USER_NOT_FOUND.
+        assertThat(loginStatus3).isEqualTo(UsuarioService.LoginStatus.USER_NOT_FOUND);
     }
 
     @Test
     public void servicioRegistroUsuario() {
         // GIVEN
+        // Creado un usuario nuevo, con una contraseña
 
         Usuario usuario = new Usuario("usuario.prueba2@gmail.com");
         usuario.setPassword("12345678");
 
         // WHEN
+        // registramos el usuario,
 
         usuarioService.registrar(usuario);
 
         // THEN
+        // el usuario se añade correctamente al sistema.
 
         Usuario usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
         assertThat(usuarioBaseDatos).isNotNull();
@@ -60,10 +73,13 @@ public class UsuarioServiceTest {
     }
 
     public void servicioRegistroUsuarioExcepcionConNullPassword() {
-        // Pasamos como argumento un usario sin contraseña
+        // GIVEN
+        // Un usuario creado sin contraseña,
+
         Usuario usuario =  new Usuario("usuario.prueba@gmail.com");
 
-        // Se produce una excempción de tipo UsuarioServiceException
+        // WHEN, THEN
+        // intentamos registrarlo, se produce una excepción de tipo UsuarioServiceException
         Assertions.assertThrows(UsuarioServiceException.class, () -> {
             usuarioService.registrar(usuario);
         });
@@ -75,13 +91,13 @@ public class UsuarioServiceTest {
         // GIVEN
         // Cargados datos de prueba del fichero datos-test.sql
 
-        // WHEN - THEN
-        // Pasamos como argumento un usario con emaii existente en datos-test.sql
+        // WHEN
+        // Creamos un usuario con un e-mail ya existente en la base de datos,
         Usuario usuario =  new Usuario("user@ua");
         usuario.setPassword("12345678");
 
-
-        // Se produce una excempción de tipo UsuarioServiceException
+        // THEN
+        // si lo registramos, se produce una excepción de tipo UsuarioServiceException
         Assertions.assertThrows(UsuarioServiceException.class, () -> {
             usuarioService.registrar(usuario);
         });
@@ -90,17 +106,25 @@ public class UsuarioServiceTest {
     @Test
     public void servicioRegistroUsuarioDevuelveUsuarioConId() {
         // GIVEN
+        // Dado un usuario con contraseña nuevo y sin identificador,
 
         Usuario usuario = new Usuario("usuario.prueba@gmail.com");
         usuario.setPassword("12345678");
 
         // WHEN
+        // lo registramos en el sistema,
 
-        usuario = usuarioService.registrar(usuario);
+        usuarioService.registrar(usuario);
 
         // THEN
+        // se actualiza el identificador del usuario
 
         assertThat(usuario.getId()).isNotNull();
+
+        // con el identificador que se ha guardado en la BD.
+
+        Usuario usuarioBD = usuarioService.findById(usuario.getId());
+        assertThat(usuarioBD).isEqualTo(usuario);
     }
 
     @Test
@@ -109,11 +133,15 @@ public class UsuarioServiceTest {
         // Cargados datos de prueba del fichero datos-test.sql
 
         // WHEN
+        // recuperamos un usuario usando su e-mail,
 
         Usuario usuario = usuarioService.findByEmail("user@ua");
 
         // THEN
+        // el usuario obtenido es el correcto.
 
         assertThat(usuario.getId()).isEqualTo(1L);
+        assertThat(usuario.getEmail()).isEqualTo("user@ua");
+        assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
     }
 }
