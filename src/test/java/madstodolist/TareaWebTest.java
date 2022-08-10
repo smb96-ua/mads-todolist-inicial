@@ -30,7 +30,7 @@ public class TareaWebTest {
     @Autowired
     private TareaService tareaService;
 
-    // Moqueamos el managerUserSession y la sesión HTTP para poder moquear el usuario logeado
+    // Moqueamos el managerUserSession para poder moquear el usuario logeado
     @MockBean
     private ManagerUserSession managerUserSession;
 
