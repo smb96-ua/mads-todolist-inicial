@@ -26,10 +26,8 @@ public class Tarea implements Serializable {
     private Usuario usuario;
 
     // Constructor vacío necesario para JPA/Hibernate.
-    // Lo hacemos privado para que no se pueda usar desde el código de la aplicación. Para crear un
-    // usuario en la aplicación habrá que llamar al constructor público. Hibernate sí que lo puede usar, a pesar
-    // de ser privado.
-    private Tarea() {}
+    // No debe usarse desde la aplicación.
+    public Tarea() {}
 
     // Al crear una tarea la asociamos automáticamente a un
     // usuario. Actualizamos por tanto la lista de tareas del
