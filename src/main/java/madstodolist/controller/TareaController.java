@@ -1,8 +1,8 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
-import madstodolist.controller.exception.UsuarioNotFoundException;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -28,18 +28,20 @@ public class TareaController {
     @Autowired
     ManagerUserSession managerUserSession;
 
+    private void comprobarUsuarioLogeado(Long idUsuario) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (!idUsuario.equals(idUsuarioLogeado))
+            throw new UsuarioNoLogeadoException();
+    }
 
     @GetMapping("/usuarios/{id}/tareas/nueva")
     public String formNuevaTarea(@PathVariable(value="id") Long idUsuario,
                                  @ModelAttribute TareaData tareaData, Model model,
                                  HttpSession session) {
 
-        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
+        comprobarUsuarioLogeado(idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
-        if (usuario == null) {
-            throw new UsuarioNotFoundException();
-        }
         model.addAttribute("usuario", usuario);
         return "formNuevaTarea";
     }
@@ -49,12 +51,9 @@ public class TareaController {
                              Model model, RedirectAttributes flash,
                              HttpSession session) {
 
-        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
+        comprobarUsuarioLogeado(idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
-        if (usuario == null) {
-            throw new UsuarioNotFoundException();
-        }
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
@@ -63,12 +62,9 @@ public class TareaController {
     @GetMapping("/usuarios/{id}/tareas")
     public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
 
-        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
+        comprobarUsuarioLogeado(idUsuario);
 
         Usuario usuario = usuarioService.findById(idUsuario);
-        if (usuario == null) {
-            throw new UsuarioNotFoundException();
-        }
         List<Tarea> tareas = tareaService.allTareasUsuario(idUsuario);
         model.addAttribute("usuario", usuario);
         model.addAttribute("tareas", tareas);
@@ -84,7 +80,7 @@ public class TareaController {
             throw new TareaNotFoundException();
         }
 
-        managerUserSession.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
+        comprobarUsuarioLogeado(tarea.getUsuario().getId());
 
         model.addAttribute("tarea", tarea);
         tareaData.setTitulo(tarea.getTitulo());
@@ -101,7 +97,7 @@ public class TareaController {
 
         Long idUsuario = tarea.getUsuario().getId();
 
-        managerUserSession.comprobarUsuarioLogeado(session, idUsuario);
+        comprobarUsuarioLogeado(idUsuario);
 
         tareaService.modificaTarea(idTarea, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
@@ -118,7 +114,7 @@ public class TareaController {
             throw new TareaNotFoundException();
         }
 
-        managerUserSession.comprobarUsuarioLogeado(session, tarea.getUsuario().getId());
+        comprobarUsuarioLogeado(tarea.getUsuario().getId());
 
         tareaService.borraTarea(idTarea);
         return "";

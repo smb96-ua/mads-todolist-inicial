@@ -1,5 +1,7 @@
 package madstodolist.authentication;
 
+import madstodolist.controller.exception.UsuarioNoLogeadoException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpSession;
@@ -7,26 +9,22 @@ import javax.servlet.http.HttpSession;
 @Component
 public class ManagerUserSession {
 
+    @Autowired
+    HttpSession session;
+
     // Añadimos el id de usuario en la sesión HTTP para hacer
     // una autorización sencilla. En los métodos de controllers
     // comprobamos si el id del usuario logeado coincide con el obtenido
     // desde la URL
-    public void logearUsuario(HttpSession session, Long idUsuario) {
+    public void logearUsuario(Long idUsuario) {
         session.setAttribute("idUsuarioLogeado", idUsuario);
     }
 
-    public void logout(HttpSession session) {
-        session.setAttribute("idUsuarioLogeado", null);
-    }
-
-    public boolean comprobarUsuarioLogeado(HttpSession session, Long idUsuario) {
-        Long idUsuarioLogeado = (Long) session.getAttribute("idUsuarioLogeado");
-        if (!idUsuario.equals(idUsuarioLogeado))
-            throw new UsuarioNoLogeadoException();
-        return true;
-    }
-
-    public Long usuarioLogeado(HttpSession session) {
+    public Long usuarioLogeado() {
         return (Long) session.getAttribute("idUsuarioLogeado");
+    }
+
+    public void logout() {
+        session.setAttribute("idUsuarioLogeado", null);
     }
 }

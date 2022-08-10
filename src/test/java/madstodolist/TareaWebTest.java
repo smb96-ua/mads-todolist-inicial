@@ -2,7 +2,6 @@ package madstodolist;
 
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.service.TareaService;
-import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,6 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,19 +28,20 @@ public class TareaWebTest {
     // Declaramos los servicios como Autowired y usamos los datos
     // de prueba de la base de datos
     @Autowired
-    private UsuarioService usuarioService;
-
-    @Autowired
     private TareaService tareaService;
 
-    // Al moquear el manegerUserSession, no lanza la excepción cuando
-    // en los controllers se llama a comprobarUsuarioLogeado y se intenta comprobar
-    // si un usuario está logeado
+    // Moqueamos el managerUserSession y la sesión HTTP para poder moquear el usuario logeado
     @MockBean
     private ManagerUserSession managerUserSession;
 
     @Test
     public void listaTareas() throws Exception {
+        // Moqueamos el método usuarioLogeado para que devuelva el usuario 1L,
+        // el mismo que se está usando en la petición. De esta forma evitamos
+        // que salte la excepción de que el usuario que está haciendo la
+        // petición no está logeado.
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+
         // GIVEN
         // Cargados datos de prueba del fichero datos-test.sql,
 
@@ -57,6 +58,9 @@ public class TareaWebTest {
 
     @Test
     public void getNuevaTareaDevuelveForm() throws Exception {
+        // Ver el comentario en el primer test
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+
         // GIVEN
         // Cargados datos de prueba del fichero datos-test.sql,
 
@@ -74,6 +78,9 @@ public class TareaWebTest {
 
     @Test
     public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
+        // Ver el comentario en el primer test
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+
         // GIVEN
         // Cargados datos de prueba del fichero datos-test.sql,
 
@@ -96,6 +103,9 @@ public class TareaWebTest {
 
     @Test
     public void deleteTareaDevuelveOKyBorraTarea() throws Exception {
+        // Ver el comentario en el primer test
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+
         // GIVEN
         // Cargados datos de prueba del fichero datos-test.sql,
 
@@ -115,20 +125,10 @@ public class TareaWebTest {
     }
 
     @Test
-    public void getNuevaTareaDevuelveNotFoundCuandoNoExisteUsuario() throws Exception {
-        // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
-
-        // WHEN, THEN
-        // si realizamos una petición GET para crear una nueva tarea de
-        // un usuario no existente se devuelve el estado HTTP NOT_FOUND.
-
-        this.mockMvc.perform(get("/usuarios/2/tareas/nueva"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     public void editarTareaDevuelveForm() throws Exception {
+        // Ver el comentario en el primer test
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+
         // GIVEN
         // Cargados datos de prueba del fichero datos-test.sql,
 

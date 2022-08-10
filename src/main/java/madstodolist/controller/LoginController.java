@@ -44,7 +44,7 @@ public class LoginController {
         if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
             Usuario usuario = usuarioService.findByEmail(loginData.geteMail());
 
-            managerUserSession.logearUsuario(session, usuario.getId());
+            managerUserSession.logearUsuario(usuario.getId());
 
             return "redirect:/usuarios/" + usuario.getId() + "/tareas";
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
@@ -87,7 +87,7 @@ public class LoginController {
 
    @GetMapping("/logout")
    public String logout(HttpSession session) {
-        managerUserSession.logout(session);
+        managerUserSession.logout();
         return "redirect:/login";
    }
 }
