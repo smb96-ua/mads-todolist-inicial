@@ -38,7 +38,7 @@ public class TareaServiceTest {
         Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Práctica 1 de MADS");
 
         // THEN
-        // al recuperar el usuario usando el método findByEmail la tarea creada
+        // al recuperar el usuario usando el método de servicio findByEmail la tarea creada
         // está en la lista de tareas del usuario.
 
         Usuario usuario = usuarioService.findByEmail("user@ua");
