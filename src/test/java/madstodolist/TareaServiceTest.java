@@ -42,7 +42,7 @@ public class TareaServiceTest {
         // está en la lista de tareas del usuario.
 
         Usuario usuario = usuarioService.findByEmail("user@ua");
-        assertThat(usuario.getTareas().size() == 3);
+        assertThat(usuario.getTareas()).hasSize(3);
         assertThat(usuario.getTareas()).contains(tarea);
     }
 
@@ -106,6 +106,6 @@ public class TareaServiceTest {
         // la tarea ya no está en la base de datos ni en las tareas del usuario.
 
         assertThat(tareaService.findById(tarea.getId())).isNull();
-        assertThat(usuarioService.findById(1L).getTareas().size() == 2);
+        assertThat(usuarioService.findById(1L).getTareas()).hasSize(2);
     }
 }
