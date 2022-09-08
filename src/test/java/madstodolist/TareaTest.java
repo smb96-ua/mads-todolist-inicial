@@ -18,7 +18,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
-@Sql("/datos-test.sql")
 @Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class TareaTest {
 
@@ -35,7 +34,7 @@ public class TareaTest {
     @Test
     public void crearTarea() {
         // GIVEN
-        // Creado usuario nuevo,
+        // Un usuario nuevo creado en memoria, sin conexión con la BD,
 
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
 
@@ -111,15 +110,22 @@ public class TareaTest {
     }
 
     //
-    // Tests TareaRepository
+    // Tests TareaRepository.
+    // El código que trabaja con repositorios debe
+    // estar en un entorno transactional, para que todas las peticiones
+    // estén en la misma conexión a la base de datos, las entidades estén
+    // conectadas y sea posible acceder a colecciones LAZY.
     //
 
     @Test
+    @Transactional
     public void guardarTareaEnBaseDatos() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Un usuario en la base de datos.
 
-        Usuario usuario = usuarioRepository.findById(1L).orElse(null);
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+
         Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
 
         // WHEN
@@ -143,10 +149,11 @@ public class TareaTest {
     }
 
     @Test
+    @Transactional
     public void salvarTareaEnBaseDatosConUsuarioNoBDLanzaExcepcion() {
         // GIVEN
-        // Creamos un usuario nuevo que no añadimos a la BD y creamos
-        // una tarea asociada a ese usuario,
+        // Un usuario nuevo que no está en la BD
+        // y una tarea asociada a ese usuario,
 
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
         Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
@@ -160,61 +167,75 @@ public class TareaTest {
     }
 
     @Test
+    @Transactional
     public void unUsuarioTieneUnaListaDeTareas() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Un usuario con 2 tareas en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Long usuarioId = usuario.getId();
+
+        Tarea tarea1 = new Tarea(usuario, "Práctica 1 de MADS");
+        Tarea tarea2 = new Tarea(usuario, "Renovar el DNI");
+        tareaRepository.save(tarea1);
+        tareaRepository.save(tarea2);
 
         // WHEN
-        // recuperamos un ususario de la base de datos,
-        Usuario usuario = usuarioRepository.findById(1L).orElse(null);
+        // recuperamos el ususario de la base de datos,
+
+        Usuario usuarioRecuperado = usuarioRepository.findById(usuarioId).orElse(null);
 
         // THEN
         // su lista de tareas también se recupera, porque se ha
         // definido la relación de usuario y tareas como EAGER.
 
-        assertThat(usuario.getTareas()).hasSize(2);
+        assertThat(usuarioRecuperado.getTareas()).hasSize(2);
     }
 
     @Test
+    @Transactional
     public void añadirUnaTareaAUnUsuarioEnBD() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Un usuario en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Long usuarioId = usuario.getId();
 
         // WHEN
-        // creamos una nueva tarea con un usuario recuperado de la BD
+        // Creamos una nueva tarea con el usuario recuperado de la BD
         // y la salvamos,
 
-        Usuario usuario = usuarioRepository.findById(1L).orElse(null);
-        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        Usuario usuarioBD = usuarioRepository.findById(usuarioId).orElse(null);
+        Tarea tarea = new Tarea(usuarioBD, "Práctica 1 de MADS");
         tareaRepository.save(tarea);
         Long tareaId = tarea.getId();
 
         // THEN
-        // la tarea queda guardada en la BD asociada al usuario.
+        // la tarea queda guardada en la BD asociada al usuario
 
-        Usuario usuarioBD = usuarioRepository.findById(1L).orElse(null);
         Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
         assertThat(tareaBD).isEqualTo(tarea);
-        assertThat(usuarioBD.getTareas()).contains(tareaBD);
         assertThat(tarea.getUsuario()).isEqualTo(usuarioBD);
+
+        // y si recuperamos el usuario se obtiene la nueva tarea
+        usuarioBD = usuarioRepository.findById(usuarioId).orElse(null);
+        assertThat(usuarioBD.getTareas()).contains(tareaBD);
     }
 
-    //
-    // Tests modelo Tarea con la conexión con la BD abierta usando la
-    // anotación @Transactional y el TareaRepository
-    //
 
     @Test
-    // Al usar @Transactional se ejecuta el test con
-    // la conexión con la BD abierta y las entidades conectadas
-    // con la base de datos
     @Transactional
     public void cambioEnLaEntidadEnTransactionalModificaLaBD() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql, habiendo
-        // anotado el test con @Transactional y recuperada una tarea,
+        // Un usuario y una tarea en la base de datos
+        Usuario usuario = new Usuario("user@ua");
+        usuarioRepository.save(usuario);
+        Tarea tarea = new Tarea(usuario, "Práctica 1 de MADS");
+        tareaRepository.save(tarea);
 
-        Tarea tarea = tareaRepository.findById(1L).orElse(null);
+        // Recuperamos la tarea
+        Long tareaId = tarea.getId();
+        tarea = tareaRepository.findById(tareaId).orElse(null);
 
         // WHEN
         // modificamos la descripción de la tarea
@@ -224,7 +245,7 @@ public class TareaTest {
         // THEN
         // la descripción queda actualizada en la BD.
 
-        Tarea tareaBD = tareaRepository.findById(1L).orElse(null);
+        Tarea tareaBD = tareaRepository.findById(tareaId).orElse(null);
         assertThat(tareaBD.getTitulo()).isEqualTo(tarea.getTitulo());
     }
 }

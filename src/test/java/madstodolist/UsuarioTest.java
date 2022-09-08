@@ -1,6 +1,5 @@
 package madstodolist;
 
-import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
-@Sql("/datos-test.sql")
 @Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class UsuarioTest {
 
@@ -94,10 +92,15 @@ public class UsuarioTest {
     }
 
     //
-    // Tests UsuarioRepository
+    // Tests UsuarioRepository.
+    // El código que trabaja con repositorios debe
+    // estar en un entorno transactional, para que todas las peticiones
+    // estén en la misma conexión a la base de datos, las entidades estén
+    // conectadas y sea posible acceder a colecciones LAZY.
     //
 
     @Test
+    @Transactional
     public void crearUsuarioBaseDatos() throws ParseException {
         // GIVEN
         // Un usuario nuevo creado sin identificador
@@ -130,36 +133,46 @@ public class UsuarioTest {
     }
 
     @Test
+    @Transactional
     public void buscarUsuarioEnBaseDatos() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuarioRepository.save(usuario);
+        Long usuarioId = usuario.getId();
 
         // WHEN
         // se recupera de la base de datos un usuario por su identificador,
 
-        Usuario usuario = usuarioRepository.findById(1L).orElse(null);
+        Usuario usuarioBD = usuarioRepository.findById(usuarioId).orElse(null);
 
         // THEN
         // se obtiene el usuario correcto y se recuperan sus propiedades.
 
-        assertThat(usuario).isNotNull();
-        assertThat(usuario.getId()).isEqualTo(1L);
-        assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
+        assertThat(usuarioBD).isNotNull();
+        assertThat(usuarioBD.getId()).isEqualTo(usuarioId);
+        assertThat(usuarioBD.getNombre()).isEqualTo("Usuario Ejemplo");
     }
 
     @Test
+    @Transactional
     public void buscarUsuarioPorEmail() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Un usuario en la BD
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuarioRepository.save(usuario);
+        Long usuarioId = usuario.getId();
 
         // WHEN
         // buscamos al usuario por su correo electrónico,
 
-        Usuario usuario = usuarioRepository.findByEmail("user@ua").orElse(null);
+        Usuario usuarioBD = usuarioRepository.findByEmail("user@ua").orElse(null);
 
         // THEN
         // se obtiene el usuario correcto.
 
-        assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
+        assertThat(usuarioBD.getNombre()).isEqualTo("Usuario Ejemplo");
     }
 }

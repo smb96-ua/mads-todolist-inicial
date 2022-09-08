@@ -5,31 +5,38 @@ import madstodolist.service.UsuarioService;
 import madstodolist.service.UsuarioServiceException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
-@Sql("/datos-test.sql")
 @Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class UsuarioServiceTest {
 
     @Autowired
     private UsuarioService usuarioService;
 
+    // Método para inicializar los datos de prueba en la BD
+    // Devuelve el identificador del usuario de la BD
+    Long addUsuarioBD() {
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setNombre("Usuario Ejemplo");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        return usuario.getId();
+    }
+
     @Test
     public void servicioLoginUsuario() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql
+        // Un usuario en la BD
+
+        addUsuarioBD();
 
         // WHEN
-
         // intentamos logear un usuario y contraseña correctos
         UsuarioService.LoginStatus loginStatus1 = usuarioService.login("user@ua", "123");
 
@@ -72,6 +79,7 @@ public class UsuarioServiceTest {
         assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
     }
 
+    @Test
     public void servicioRegistroUsuarioExcepcionConNullPassword() {
         // GIVEN
         // Un usuario creado sin contraseña,
@@ -89,7 +97,9 @@ public class UsuarioServiceTest {
     @Test
     public void servicioRegistroUsuarioExcepcionConEmailRepetido() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql
+        // Un usuario en la BD
+
+        addUsuarioBD();
 
         // WHEN
         // Creamos un usuario con un e-mail ya existente en la base de datos,
@@ -130,7 +140,9 @@ public class UsuarioServiceTest {
     @Test
     public void servicioConsultaUsuarioDevuelveUsuario() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql
+        // Un usuario en la BD
+
+        Long usuarioId = addUsuarioBD();
 
         // WHEN
         // recuperamos un usuario usando su e-mail,
@@ -140,7 +152,7 @@ public class UsuarioServiceTest {
         // THEN
         // el usuario obtenido es el correcto.
 
-        assertThat(usuario.getId()).isEqualTo(1L);
+        assertThat(usuario.getId()).isEqualTo(usuarioId);
         assertThat(usuario.getEmail()).isEqualTo("user@ua");
         assertThat(usuario.getNombre()).isEqualTo("Usuario Ejemplo");
     }

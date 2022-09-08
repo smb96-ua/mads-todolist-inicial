@@ -7,13 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -56,8 +53,8 @@ public class UsuarioWebTest {
         // URL con las tareas del usuario
 
         this.mockMvc.perform(post("/login")
-                .param("eMail", "ana.garcia@gmail.com")
-                .param("password", "12345678"))
+                        .param("eMail", "ana.garcia@gmail.com")
+                        .param("password", "12345678"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/usuarios/1/tareas"));
     }
@@ -74,8 +71,8 @@ public class UsuarioWebTest {
         // Realizamos una petición POST con los datos del usuario mockeado y
         // se debe devolver una página que contenga el mensaja "No existe usuario"
         this.mockMvc.perform(post("/login")
-                    .param("eMail","pepito.perez@gmail.com")
-                    .param("password","12345678"))
+                        .param("eMail","pepito.perez@gmail.com")
+                        .param("password","12345678"))
                 .andExpect(content().string(containsString("No existe usuario")));
     }
 
@@ -91,8 +88,8 @@ public class UsuarioWebTest {
         // Realizamos una petición POST con los datos del usuario mockeado y
         // se debe devolver una página que contenga el mensaja "Contraseña incorrecta"
         this.mockMvc.perform(post("/login")
-                    .param("eMail","ana.garcia@gmail.com")
-                    .param("password","000"))
+                        .param("eMail","ana.garcia@gmail.com")
+                        .param("password","000"))
                 .andExpect(content().string(containsString("Contraseña incorrecta")));
     }
 }

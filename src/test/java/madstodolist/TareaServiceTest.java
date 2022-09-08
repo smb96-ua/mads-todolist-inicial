@@ -18,7 +18,6 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 // https://dev.to/henrykeys/don-t-use-transactional-in-tests-40eb
 
 @SpringBootTest
-@Sql("/datos-test.sql")
 @Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
 public class TareaServiceTest {
 
@@ -28,17 +27,39 @@ public class TareaServiceTest {
     @Autowired
     TareaService tareaService;
 
+    class DosIds {
+        Long usuarioId;
+        Long tareaId;
+        public DosIds(Long usuarioId, Long tareaId) {
+            this.usuarioId = usuarioId;
+            this.tareaId = tareaId;
+        }
+    }
+
+    // Método para inicializar los datos de prueba en la BD
+    // Devuelve el identificador del usuario y el de la primera tarea añadida
+    DosIds addUsuarioTareasBD() {
+        Usuario usuario = new Usuario("user@ua");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        Tarea tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
+        tareaService.nuevaTareaUsuario(usuario.getId(), "Renovar DNI");
+        return new DosIds(usuario.getId(), tarea1.getId());
+    }
+
     @Test
     public void testNuevaTareaUsuario() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Un usuario en la BD
+
+        Long usuarioId = addUsuarioTareasBD().usuarioId;
 
         // WHEN
-        // creamos una nueva tarea asociada a un usuario,
-        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Práctica 1 de MADS");
+        // creamos una nueva tarea asociada al usuario,
+        Tarea tarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
 
         // THEN
-        // al recuperar el usuario usando el método de servicio findByEmail la tarea creada
+        // al recuperar el usuario usando el método findByEmail la tarea creada
         // está en la lista de tareas del usuario.
 
         Usuario usuario = usuarioService.findByEmail("user@ua");
@@ -49,12 +70,14 @@ public class TareaServiceTest {
     @Test
     public void testBuscarTarea() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
+        // Una tarea en la BD
+
+        Long tareaId = addUsuarioTareasBD().tareaId;
 
         // WHEN
         // recuperamos una tarea de la base de datos a partir de su ID,
 
-        Tarea lavarCoche = tareaService.findById(1L);
+        Tarea lavarCoche = tareaService.findById(tareaId);
 
         // THEN
         // los datos de la tarea recuperada son correctos.
@@ -66,46 +89,46 @@ public class TareaServiceTest {
     @Test
     public void testModificarTarea() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql,
-        // creada una tarea nueva de un usuario y obtenido su identificador,
+        // Un usuario y una tarea en la BD
 
-        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Pagar el recibo");
-        Long idNuevaTarea = tarea.getId();
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaId = dosIds.tareaId;
 
         // WHEN
         // modificamos la tarea correspondiente a ese identificador,
 
-        Tarea tareaModificada = tareaService.modificaTarea(idNuevaTarea, "Pagar la matrícula");
+        tareaService.modificaTarea(tareaId, "Limpiar los cristales del coche");
 
         // THEN
         // al buscar por el identificador en la base de datos se devuelve la tarea modificada
 
-        Tarea tareaBD = tareaService.findById(idNuevaTarea);
-        assertThat(tareaBD.getTitulo()).isEqualTo("Pagar la matrícula");
+        Tarea tareaBD = tareaService.findById(tareaId);
+        assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar los cristales del coche");
 
         // y el usuario tiene también esa tarea modificada.
-        Usuario usuario = usuarioService.findById(1L);
-        usuario.getTareas().contains(tareaBD);
+        Usuario usuarioBD = usuarioService.findById(usuarioId);
+        usuarioBD.getTareas().contains(tareaBD);
     }
 
     @Test
     public void testBorrarTarea() {
         // GIVEN
-        // Cargados datos de prueba del fichero datos-test.sql, añadida
-        // una tarea nueva al usuario 1L y obtenido el identificador de la tarea,
+        // Un usuario y una tarea en la BD
 
-        Tarea tarea = tareaService.nuevaTareaUsuario(1L, "Estudiar MADS");
-        Long idNuevaTarea = tarea.getId();
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaId = dosIds.tareaId;
 
         // WHEN
         // borramos la tarea correspondiente al identificador,
 
-        tareaService.borraTarea(idNuevaTarea);
+        tareaService.borraTarea(tareaId);
 
         // THEN
         // la tarea ya no está en la base de datos ni en las tareas del usuario.
 
-        assertThat(tareaService.findById(tarea.getId())).isNull();
-        assertThat(usuarioService.findById(1L).getTareas()).hasSize(2);
+        assertThat(tareaService.findById(tareaId)).isNull();
+        assertThat(usuarioService.findById(usuarioId).getTareas()).hasSize(1);
     }
 }
