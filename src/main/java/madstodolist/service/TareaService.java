@@ -19,14 +19,10 @@ public class TareaService {
 
     Logger logger = LoggerFactory.getLogger(TareaService.class);
 
-    private UsuarioRepository usuarioRepository;
-    private TareaRepository tareaRepository;
-
     @Autowired
-    public TareaService(UsuarioRepository usuarioRepository, TareaRepository tareaRepository) {
-        this.usuarioRepository = usuarioRepository;
-        this.tareaRepository = tareaRepository;
-    }
+    private UsuarioRepository usuarioRepository;
+    @Autowired
+    private TareaRepository tareaRepository;
 
     @Transactional
     public Tarea nuevaTareaUsuario(Long idUsuario, String tituloTarea) {

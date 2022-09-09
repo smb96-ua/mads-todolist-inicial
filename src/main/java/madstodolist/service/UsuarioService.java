@@ -17,12 +17,8 @@ public class UsuarioService {
 
     public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD}
 
-    private UsuarioRepository usuarioRepository;
-
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
-    }
+    private UsuarioRepository usuarioRepository;
 
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
