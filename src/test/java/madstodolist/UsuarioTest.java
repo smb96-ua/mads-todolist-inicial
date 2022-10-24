@@ -12,10 +12,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 @SpringBootTest
-@Sql(scripts = "/clean-db.sql", executionPhase = AFTER_TEST_METHOD)
+@Sql(scripts = "/clean-db.sql")
 public class UsuarioTest {
 
     @Autowired
