@@ -1,6 +1,5 @@
 package madstodolist;
 
-import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -162,7 +161,6 @@ public class UsuarioTest {
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuarioRepository.save(usuario);
-        Long usuarioId = usuario.getId();
 
         // WHEN
         // buscamos al usuario por su correo electrónico,

@@ -1,6 +1,5 @@
 package madstodolist.authentication;
 
-import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

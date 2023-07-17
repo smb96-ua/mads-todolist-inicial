@@ -53,7 +53,6 @@ public class TareaController {
 
         comprobarUsuarioLogeado(idUsuario);
 
-        Usuario usuario = usuarioService.findById(idUsuario);
         tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
