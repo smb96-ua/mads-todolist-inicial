@@ -75,4 +75,14 @@ public class TareaService {
         }
         tareaRepository.delete(tarea);
     }
+
+    @Transactional
+    public boolean usuarioContieneTarea(Long usuarioId, Long tareaId) {
+        Tarea tarea = tareaRepository.findById(tareaId).orElse(null);
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        if (tarea == null || usuario == null) {
+            throw new TareaServiceException("No existe tarea o usuario id");
+        }
+        return usuario.getTareas().contains(tarea);
+    }
 }

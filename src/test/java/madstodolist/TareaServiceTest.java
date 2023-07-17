@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -130,4 +131,15 @@ public class TareaServiceTest {
         assertThat(tareaService.findById(tareaId)).isNull();
         assertThat(usuarioService.findById(usuarioId).getTareas()).hasSize(1);
     }
+
+    @Test
+    public void asignarEtiquetaATarea(){
+
+        DosIds dosIds = addUsuarioTareasBD();
+        Long usuarioId = dosIds.usuarioId;
+        Long tareaId = dosIds.tareaId;
+
+        assertThat(tareaService.usuarioContieneTarea(usuarioId,tareaId)).isTrue();
+    }
+
 }

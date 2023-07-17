@@ -1,5 +1,6 @@
 package madstodolist;
 
+import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.model.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,6 @@ public class UsuarioTest {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
 
     //
     // Tests modelo Usuario en memoria, sin la conexión con la BD
