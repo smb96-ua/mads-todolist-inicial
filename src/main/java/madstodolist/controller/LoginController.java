@@ -1,8 +1,9 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.dto.LoginData;
+import madstodolist.dto.RegistroData;
 import madstodolist.dto.UsuarioData;
-import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,13 +71,14 @@ public class LoginController {
             return "formRegistro";
         }
 
-        if (usuarioService.findByEmail(registroData.geteMail()) != null) {
+        if (usuarioService.findByEmail(registroData.getEmail()) != null) {
             model.addAttribute("registroData", registroData);
-            model.addAttribute("error", "El usuario " + registroData.geteMail() + " ya existe");
+            model.addAttribute("error", "El usuario " + registroData.getEmail() + " ya existe");
             return "formRegistro";
         }
 
-        Usuario usuario = new Usuario(registroData.geteMail());
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail(registroData.getEmail());
         usuario.setPassword(registroData.getPassword());
         usuario.setFechaNacimiento(registroData.getFechaNacimiento());
         usuario.setNombre(registroData.getNombre());

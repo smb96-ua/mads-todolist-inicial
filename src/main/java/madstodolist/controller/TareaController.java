@@ -3,9 +3,8 @@ package madstodolist.controller;
 import madstodolist.authentication.ManagerUserSession;
 import madstodolist.controller.exception.UsuarioNoLogeadoException;
 import madstodolist.controller.exception.TareaNotFoundException;
+import madstodolist.dto.TareaData;
 import madstodolist.dto.UsuarioData;
-import madstodolist.model.Tarea;
-import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,7 @@ public class TareaController {
 
         comprobarUsuarioLogeado(idUsuario);
 
-        Usuario usuario = usuarioService.findById(idUsuario);
+        UsuarioData usuario = usuarioService.findById(idUsuario);
         model.addAttribute("usuario", usuario);
         return "formNuevaTarea";
     }
@@ -64,8 +63,8 @@ public class TareaController {
 
         comprobarUsuarioLogeado(idUsuario);
 
-        Usuario usuario = usuarioService.findById(idUsuario);
-        List<Tarea> tareas = tareaService.allTareasUsuario(idUsuario);
+        UsuarioData usuario = usuarioService.findById(idUsuario);
+        List<TareaData> tareas = tareaService.allTareasUsuario(idUsuario);
         model.addAttribute("usuario", usuario);
         model.addAttribute("tareas", tareas);
         return "listaTareas";
@@ -75,12 +74,12 @@ public class TareaController {
     public String formEditaTarea(@PathVariable(value="id") Long idTarea, @ModelAttribute TareaData tareaData,
                                  Model model, HttpSession session) {
 
-        Tarea tarea = tareaService.findById(idTarea);
+        TareaData tarea = tareaService.findById(idTarea);
         if (tarea == null) {
             throw new TareaNotFoundException();
         }
 
-        comprobarUsuarioLogeado(tarea.getUsuario().getId());
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
 
         model.addAttribute("tarea", tarea);
         tareaData.setTitulo(tarea.getTitulo());
@@ -90,18 +89,18 @@ public class TareaController {
     @PostMapping("/tareas/{id}/editar")
     public String grabaTareaModificada(@PathVariable(value="id") Long idTarea, @ModelAttribute TareaData tareaData,
                                        Model model, RedirectAttributes flash, HttpSession session) {
-        Tarea tarea = tareaService.findById(idTarea);
+        TareaData tarea = tareaService.findById(idTarea);
         if (tarea == null) {
             throw new TareaNotFoundException();
         }
 
-        Long idUsuario = tarea.getUsuario().getId();
+        Long idUsuario = tarea.getUsuarioId();
 
         comprobarUsuarioLogeado(idUsuario);
 
         tareaService.modificaTarea(idTarea, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
-        return "redirect:/usuarios/" + tarea.getUsuario().getId() + "/tareas";
+        return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
     }
 
     @DeleteMapping("/tareas/{id}")
@@ -109,12 +108,12 @@ public class TareaController {
     // La anotación @ResponseBody sirve para que la cadena devuelta sea la resupuesta
     // de la petición HTTP, en lugar de una plantilla thymeleaf
     public String borrarTarea(@PathVariable(value="id") Long idTarea, RedirectAttributes flash, HttpSession session) {
-        Tarea tarea = tareaService.findById(idTarea);
+        TareaData tarea = tareaService.findById(idTarea);
         if (tarea == null) {
             throw new TareaNotFoundException();
         }
 
-        comprobarUsuarioLogeado(tarea.getUsuario().getId());
+        comprobarUsuarioLogeado(tarea.getUsuarioId());
 
         tareaService.borraTarea(idTarea);
         return "";

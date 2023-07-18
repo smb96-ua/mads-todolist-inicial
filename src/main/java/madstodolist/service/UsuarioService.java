@@ -40,7 +40,7 @@ public class UsuarioService {
     // El email y password del usuario deben ser distinto de null
     // El email no debe estar registrado en la base de datos
     @Transactional
-    public Usuario registrar(Usuario usuario) {
+    public UsuarioData registrar(UsuarioData usuario) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
             throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
@@ -48,7 +48,11 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getPassword() == null)
             throw new UsuarioServiceException("El usuario no tiene password");
-        else return usuarioRepository.save(usuario);
+        else {
+            Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+            usuarioNuevo = usuarioRepository.save(usuarioNuevo);
+            return modelMapper.map(usuarioNuevo, UsuarioData.class);
+        }
     }
 
     @Transactional(readOnly = true)
@@ -61,7 +65,11 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public Usuario findById(Long usuarioId) {
-        return usuarioRepository.findById(usuarioId).orElse(null);
+    public UsuarioData findById(Long usuarioId) {
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        if (usuario == null) return null;
+        else {
+            return modelMapper.map(usuario, UsuarioData.class);
+        }
     }
 }

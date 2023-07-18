@@ -9,6 +9,7 @@ public class UsuarioData {
     private Long id;
     private String email;
     private String nombre;
+    private String password;
     private Date fechaNacimiento;
     private Set<TareaData> tareas;
 
@@ -37,6 +38,10 @@ public class UsuarioData {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+
+    public void setPassword(String password) { this.password = password; }
+
+    public String getPassword() { return password; }
 
     public Date getFechaNacimiento() {
         return fechaNacimiento;
