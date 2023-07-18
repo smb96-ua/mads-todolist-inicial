@@ -1,4 +1,4 @@
-package madstodolist;
+package madstodolist.repository;
 
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
