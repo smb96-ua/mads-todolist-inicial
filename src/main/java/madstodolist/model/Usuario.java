@@ -86,8 +86,15 @@ public class Usuario implements Serializable {
         return tareas;
     }
 
-    public void setTareas(Set<Tarea> tareas) {
-        this.tareas = tareas;
+    public void addTarea(Tarea tarea) {
+        // Si la tarea ya está en la lista, no la añadimos
+        if (tareas.contains(tarea)) return;
+        // Añadimos la tarea a la lista
+        tareas.add(tarea);
+        // Establecemos la relación inversa del usuario en la tarea
+        if (tarea.getUsuario() != this) {
+            tarea.setUsuario(this);
+        }
     }
 
     @Override

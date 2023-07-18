@@ -29,13 +29,10 @@ public class Tarea implements Serializable {
     // No debe usarse desde la aplicación.
     public Tarea() {}
 
-    // Al crear una tarea la asociamos automáticamente a un
-    // usuario. Actualizamos por tanto la lista de tareas del
-    // usuario.
+    // Al crear una tarea la asociamos automáticamente a un usuario
     public Tarea(Usuario usuario, String titulo) {
-        this.usuario = usuario;
         this.titulo = titulo;
-        usuario.getTareas().add(this);
+        setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
     public Long getId() {
@@ -59,9 +56,13 @@ public class Tarea implements Serializable {
     }
 
     public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
+        // Comprueba si el usuario ya está establecido
+        if(this.usuario != usuario) {
+            this.usuario = usuario;
+            // Añade la tarea a la lista de tareas del usuario
+            usuario.addTarea(this);
+        }
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -71,7 +72,7 @@ public class Tarea implements Serializable {
         if (id != null && tarea.id != null)
             // Si tenemos los ID, comparamos por ID
             return Objects.equals(id, tarea.id);
-        // sino comparamos por campos obligatorios
+        // si no comparamos por campos obligatorios
         return titulo.equals(tarea.titulo) &&
                 usuario.equals(tarea.usuario);
     }
