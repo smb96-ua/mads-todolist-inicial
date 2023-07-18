@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,15 +52,16 @@ public class TareaServiceTest {
 
         // WHEN
         // creamos una nueva tarea asociada al usuario,
-        TareaData tarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
+        TareaData nuevaTarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
 
         // THEN
-        // al recuperar el usuario usando el método findByEmail la tarea creada
+        // al recuperar la lista de tareas del usuario, la nueva tarea
         // está en la lista de tareas del usuario.
 
-        UsuarioData usuario = usuarioService.findByEmail("user@ua");
-        assertThat(usuario.getTareas()).hasSize(3);
-        assertThat(usuario.getTareas()).contains(tarea);
+        List<TareaData> tareas = tareaService.allTareasUsuario(usuarioId);
+
+        assertThat(tareas).hasSize(3);
+        assertThat(tareas).contains(nuevaTarea);
     }
 
     @Test
@@ -102,8 +104,8 @@ public class TareaServiceTest {
         assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar los cristales del coche");
 
         // y el usuario tiene también esa tarea modificada.
-        UsuarioData usuarioBD = usuarioService.findById(usuarioId);
-        assertThat(usuarioBD.getTareas()).contains(tareaBD);
+        List<TareaData> tareas = tareaService.allTareasUsuario(usuarioId);
+        assertThat(tareas).contains(tareaBD);
     }
 
     @Test
@@ -124,7 +126,9 @@ public class TareaServiceTest {
         // la tarea ya no está en la base de datos ni en las tareas del usuario.
 
         assertThat(tareaService.findById(tareaId)).isNull();
-        assertThat(usuarioService.findById(usuarioId).getTareas()).hasSize(1);
+
+        List<TareaData> tareas = tareaService.allTareasUsuario(usuarioId);
+        assertThat(tareas).hasSize(1);
     }
 
     @Test

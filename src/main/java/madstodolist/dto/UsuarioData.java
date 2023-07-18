@@ -11,7 +11,6 @@ public class UsuarioData {
     private String nombre;
     private String password;
     private Date fechaNacimiento;
-    private Set<TareaData> tareas;
 
     // Getters y setters
 
@@ -49,14 +48,6 @@ public class UsuarioData {
 
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public Set<TareaData> getTareas() {
-        return tareas;
-    }
-
-    public void setTareas(Set<TareaData> tareasIds) {
-        this.tareas = tareasIds;
     }
 
     @Override
