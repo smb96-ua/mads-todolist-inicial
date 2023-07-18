@@ -25,12 +25,9 @@ public class Usuario implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date fechaNacimiento;
 
-    // Definimos el tipo de fetch como EAGER para que
-    // cualquier consulta que devuelve un usuario rellene automáticamente
-    // toda su lista de tareas
-    // CUIDADO!! No es recomendable hacerlo en aquellos casos en los
-    // que la relación pueda traer a memoria una gran cantidad de entidades
-    @OneToMany(mappedBy = "usuario", fetch = FetchType.EAGER)
+    // La relación es lazy por defecto,
+    // es necesario acceder a la lista de tareas para que se carguen
+    @OneToMany(mappedBy = "usuario")
     Set<Tarea> tareas = new HashSet<>();
 
     // Constructor vacío necesario para JPA/Hibernate.
