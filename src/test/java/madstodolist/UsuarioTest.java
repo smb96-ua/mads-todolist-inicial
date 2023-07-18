@@ -1,7 +1,7 @@
 package madstodolist;
 
 import madstodolist.model.Usuario;
-import madstodolist.model.UsuarioRepository;
+import madstodolist.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

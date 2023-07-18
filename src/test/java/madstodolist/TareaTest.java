@@ -2,9 +2,9 @@ package madstodolist;
 
 
 import madstodolist.model.Tarea;
-import madstodolist.model.TareaRepository;
+import madstodolist.repository.TareaRepository;
 import madstodolist.model.Usuario;
-import madstodolist.model.UsuarioRepository;
+import madstodolist.repository.UsuarioRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

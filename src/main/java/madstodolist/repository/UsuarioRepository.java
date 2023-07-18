@@ -1,5 +1,6 @@
-package madstodolist.model;
+package madstodolist.repository;
 
+import madstodolist.model.Usuario;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
