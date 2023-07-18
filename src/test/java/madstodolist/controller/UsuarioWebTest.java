@@ -1,4 +1,4 @@
-package madstodolist;
+package madstodolist.controller;
 
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
