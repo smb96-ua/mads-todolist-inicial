@@ -105,7 +105,7 @@ public class Usuario implements Serializable {
         if (id != null && usuario.id != null)
             // Si tenemos los ID, comparamos por ID
             return Objects.equals(id, usuario.id);
-        // sino comparamos por campos obligatorios
+        // si no comparamos por campos obligatorios
         return email.equals(usuario.email);
     }
 
