@@ -1,13 +1,14 @@
 package madstodolist.service;
 
-import madstodolist.model.Tarea;
-import madstodolist.model.Usuario;
-import madstodolist.service.TareaService;
-import madstodolist.service.UsuarioService;
+import madstodolist.dto.TareaData;
+import madstodolist.dto.UsuarioData;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,24 +27,19 @@ public class TareaServiceTest {
     @Autowired
     TareaService tareaService;
 
-    class DosIds {
-        Long usuarioId;
-        Long tareaId;
-        public DosIds(Long usuarioId, Long tareaId) {
-            this.usuarioId = usuarioId;
-            this.tareaId = tareaId;
-        }
-    }
-
     // Método para inicializar los datos de prueba en la BD
-    // Devuelve el identificador del usuario y el de la primera tarea añadida
-    DosIds addUsuarioTareasBD() {
-        Usuario usuario = new Usuario("user@ua");
+    // Devuelve un mapa con los identificadores del usuario y de la primera tarea añadida
+    Map<String, Long> addUsuarioTareasBD() {
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
         usuario.setPassword("123");
-        usuario = usuarioService.registrar(usuario);
-        Tarea tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
-        tareaService.nuevaTareaUsuario(usuario.getId(), "Renovar DNI");
-        return new DosIds(usuario.getId(), tarea1.getId());
+        UsuarioData usuarioNuevo = usuarioService.registrar(usuario);
+        TareaData tarea1 = tareaService.nuevaTareaUsuario(usuarioNuevo.getId(), "Lavar coche");
+        tareaService.nuevaTareaUsuario(usuarioNuevo.getId(), "Renovar DNI");
+        Map<String, Long> ids = new HashMap<>();
+        ids.put("usuarioId", usuarioNuevo.getId());
+        ids.put("tareaId", tarea1.getId());
+        return ids;
     }
 
     @Test
@@ -51,17 +47,17 @@ public class TareaServiceTest {
         // GIVEN
         // Un usuario en la BD
 
-        Long usuarioId = addUsuarioTareasBD().usuarioId;
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
 
         // WHEN
         // creamos una nueva tarea asociada al usuario,
-        Tarea tarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
+        TareaData tarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
 
         // THEN
         // al recuperar el usuario usando el método findByEmail la tarea creada
         // está en la lista de tareas del usuario.
 
-        Usuario usuario = usuarioService.findByEmail("user@ua");
+        UsuarioData usuario = usuarioService.findByEmail("user@ua");
         assertThat(usuario.getTareas()).hasSize(3);
         assertThat(usuario.getTareas()).contains(tarea);
     }
@@ -71,12 +67,12 @@ public class TareaServiceTest {
         // GIVEN
         // Una tarea en la BD
 
-        Long tareaId = addUsuarioTareasBD().tareaId;
+        Long tareaId = addUsuarioTareasBD().get("tareaId");
 
         // WHEN
         // recuperamos una tarea de la base de datos a partir de su ID,
 
-        Tarea lavarCoche = tareaService.findById(tareaId);
+        TareaData lavarCoche = tareaService.findById(tareaId);
 
         // THEN
         // los datos de la tarea recuperada son correctos.
@@ -90,9 +86,9 @@ public class TareaServiceTest {
         // GIVEN
         // Un usuario y una tarea en la BD
 
-        DosIds dosIds = addUsuarioTareasBD();
-        Long usuarioId = dosIds.usuarioId;
-        Long tareaId = dosIds.tareaId;
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaId = ids.get("tareaId");
 
         // WHEN
         // modificamos la tarea correspondiente a ese identificador,
@@ -102,12 +98,12 @@ public class TareaServiceTest {
         // THEN
         // al buscar por el identificador en la base de datos se devuelve la tarea modificada
 
-        Tarea tareaBD = tareaService.findById(tareaId);
+        TareaData tareaBD = tareaService.findById(tareaId);
         assertThat(tareaBD.getTitulo()).isEqualTo("Limpiar los cristales del coche");
 
         // y el usuario tiene también esa tarea modificada.
-        Usuario usuarioBD = usuarioService.findById(usuarioId);
-        usuarioBD.getTareas().contains(tareaBD);
+        UsuarioData usuarioBD = usuarioService.findById(usuarioId);
+        assertThat(usuarioBD.getTareas()).contains(tareaBD);
     }
 
     @Test
@@ -115,9 +111,9 @@ public class TareaServiceTest {
         // GIVEN
         // Un usuario y una tarea en la BD
 
-        DosIds dosIds = addUsuarioTareasBD();
-        Long usuarioId = dosIds.usuarioId;
-        Long tareaId = dosIds.tareaId;
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaId = ids.get("tareaId");
 
         // WHEN
         // borramos la tarea correspondiente al identificador,
@@ -134,9 +130,9 @@ public class TareaServiceTest {
     @Test
     public void asignarEtiquetaATarea(){
 
-        DosIds dosIds = addUsuarioTareasBD();
-        Long usuarioId = dosIds.usuarioId;
-        Long tareaId = dosIds.tareaId;
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaId = ids.get("tareaId");
 
         assertThat(tareaService.usuarioContieneTarea(usuarioId,tareaId)).isTrue();
     }

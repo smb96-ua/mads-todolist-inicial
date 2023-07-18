@@ -1,8 +1,8 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.model.Tarea;
-import madstodolist.model.Usuario;
+import madstodolist.dto.TareaData;
+import madstodolist.dto.UsuarioData;
 import madstodolist.service.TareaService;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -49,10 +49,11 @@ public class TareaWebTest {
     // Método para inicializar los datos de prueba en la BD
     // Devuelve una pareja de identificadores del usuario y la primera tarea añadida
     DosIds addUsuarioTareasBD() {
-        Usuario usuario = new Usuario("user@ua");
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua");
         usuario.setPassword("123");
         usuario = usuarioService.registrar(usuario);
-        Tarea tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
+        TareaData tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
         tareaService.nuevaTareaUsuario(usuario.getId(), "Renovar DNI");
         return new DosIds(usuario.getId(), tarea1.getId());
     }

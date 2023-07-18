@@ -1,4 +1,4 @@
-package madstodolist.controller;
+package madstodolist.dto;
 
 public class LoginData {
     private String eMail;

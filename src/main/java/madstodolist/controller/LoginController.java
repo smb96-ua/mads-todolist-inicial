@@ -1,7 +1,9 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
-import madstodolist.model.Usuario;
+import madstodolist.dto.LoginData;
+import madstodolist.dto.RegistroData;
+import madstodolist.dto.UsuarioData;
 import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,7 +43,7 @@ public class LoginController {
         UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 
         if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
-            Usuario usuario = usuarioService.findByEmail(loginData.geteMail());
+            UsuarioData usuario = usuarioService.findByEmail(loginData.geteMail());
 
             managerUserSession.logearUsuario(usuario.getId());
 
@@ -69,13 +71,14 @@ public class LoginController {
             return "formRegistro";
         }
 
-        if (usuarioService.findByEmail(registroData.geteMail()) != null) {
+        if (usuarioService.findByEmail(registroData.getEmail()) != null) {
             model.addAttribute("registroData", registroData);
-            model.addAttribute("error", "El usuario " + registroData.geteMail() + " ya existe");
+            model.addAttribute("error", "El usuario " + registroData.getEmail() + " ya existe");
             return "formRegistro";
         }
 
-        Usuario usuario = new Usuario(registroData.geteMail());
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail(registroData.getEmail());
         usuario.setPassword(registroData.getPassword());
         usuario.setFechaNacimiento(registroData.getFechaNacimiento());
         usuario.setNombre(registroData.getNombre());

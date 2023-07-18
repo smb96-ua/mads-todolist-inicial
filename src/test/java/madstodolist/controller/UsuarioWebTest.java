@@ -1,5 +1,6 @@
 package madstodolist.controller;
 
+import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,8 @@ public class UsuarioWebTest {
         // devuelva un LOGIN_OK y la llamada a usuarioServicie.findByEmail
         // para que devuelva un usuario determinado.
 
-        Usuario anaGarcia = new Usuario("ana.garcia@gmail.com");
+        UsuarioData anaGarcia = new UsuarioData();
+        anaGarcia.setNombre("Ana García");
         anaGarcia.setId(1L);
 
         when(usuarioService.login("ana.garcia@gmail.com", "12345678"))
