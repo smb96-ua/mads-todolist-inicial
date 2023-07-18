@@ -1,5 +1,6 @@
 package madstodolist.service;
 
+import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import madstodolist.service.UsuarioServiceException;
@@ -73,9 +74,9 @@ public class UsuarioServiceTest {
         // THEN
         // el usuario se añade correctamente al sistema.
 
-        Usuario usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
+        UsuarioData usuarioBaseDatos = usuarioService.findByEmail("usuario.prueba2@gmail.com");
         assertThat(usuarioBaseDatos).isNotNull();
-        assertThat(usuarioBaseDatos.getPassword()).isEqualTo(usuario.getPassword());
+        assertThat(usuarioBaseDatos.getEmail()).isEqualTo("usuario.prueba2@gmail.com");
     }
 
     @Test
@@ -146,7 +147,7 @@ public class UsuarioServiceTest {
         // WHEN
         // recuperamos un usuario usando su e-mail,
 
-        Usuario usuario = usuarioService.findByEmail("user@ua");
+        UsuarioData usuario = usuarioService.findByEmail("user@ua");
 
         // THEN
         // el usuario obtenido es el correcto.

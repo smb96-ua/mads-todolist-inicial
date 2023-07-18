@@ -1,7 +1,9 @@
 package madstodolist.service;
 
+import madstodolist.dto.UsuarioData;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,8 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
@@ -48,8 +52,12 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public Usuario findByEmail(String email) {
-        return usuarioRepository.findByEmail(email).orElse(null);
+    public UsuarioData findByEmail(String email) {
+        Usuario usuario = usuarioRepository.findByEmail(email).orElse(null);
+        if (usuario == null) return null;
+        else {
+            return modelMapper.map(usuario, UsuarioData.class);
+        }
     }
 
     @Transactional(readOnly = true)

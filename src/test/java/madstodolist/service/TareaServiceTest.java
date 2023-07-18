@@ -1,5 +1,7 @@
 package madstodolist.service;
 
+import madstodolist.dto.TareaData;
+import madstodolist.dto.UsuarioData;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -41,7 +43,7 @@ public class TareaServiceTest {
         Usuario usuario = new Usuario("user@ua");
         usuario.setPassword("123");
         usuario = usuarioService.registrar(usuario);
-        Tarea tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
+        TareaData tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
         tareaService.nuevaTareaUsuario(usuario.getId(), "Renovar DNI");
         return new DosIds(usuario.getId(), tarea1.getId());
     }
@@ -55,13 +57,13 @@ public class TareaServiceTest {
 
         // WHEN
         // creamos una nueva tarea asociada al usuario,
-        Tarea tarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
+        TareaData tarea = tareaService.nuevaTareaUsuario(usuarioId, "Práctica 1 de MADS");
 
         // THEN
         // al recuperar el usuario usando el método findByEmail la tarea creada
         // está en la lista de tareas del usuario.
 
-        Usuario usuario = usuarioService.findByEmail("user@ua");
+        UsuarioData usuario = usuarioService.findByEmail("user@ua");
         assertThat(usuario.getTareas()).hasSize(3);
         assertThat(usuario.getTareas()).contains(tarea);
     }

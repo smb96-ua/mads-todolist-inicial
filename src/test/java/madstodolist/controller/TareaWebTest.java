@@ -1,6 +1,7 @@
 package madstodolist.controller;
 
 import madstodolist.authentication.ManagerUserSession;
+import madstodolist.dto.TareaData;
 import madstodolist.model.Tarea;
 import madstodolist.model.Usuario;
 import madstodolist.service.TareaService;
@@ -52,7 +53,7 @@ public class TareaWebTest {
         Usuario usuario = new Usuario("user@ua");
         usuario.setPassword("123");
         usuario = usuarioService.registrar(usuario);
-        Tarea tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
+        TareaData tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
         tareaService.nuevaTareaUsuario(usuario.getId(), "Renovar DNI");
         return new DosIds(usuario.getId(), tarea1.getId());
     }

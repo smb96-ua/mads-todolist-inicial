@@ -4,11 +4,13 @@ import madstodolist.model.Tarea;
 import madstodolist.repository.TareaRepository;
 import madstodolist.model.Usuario;
 import madstodolist.repository.UsuarioRepository;
+import madstodolist.dto.TareaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.modelmapper.ModelMapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,9 +25,11 @@ public class TareaService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private TareaRepository tareaRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Transactional
-    public Tarea nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
+    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
         logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) {
@@ -33,7 +37,7 @@ public class TareaService {
         }
         Tarea tarea = new Tarea(usuario, tituloTarea);
         tareaRepository.save(tarea);
-        return tarea;
+        return modelMapper.map(tarea, TareaData.class);
     }
 
     @Transactional(readOnly = true)

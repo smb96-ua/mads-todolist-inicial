@@ -10,7 +10,7 @@ public class UsuarioData {
     private String email;
     private String nombre;
     private Date fechaNacimiento;
-    private Set<Long> tareasIds;
+    private Set<TareaData> tareas;
 
     // Getters y setters
 
@@ -46,12 +46,12 @@ public class UsuarioData {
         this.fechaNacimiento = fechaNacimiento;
     }
 
-    public Set<Long> getTareasIds() {
-        return tareasIds;
+    public Set<TareaData> getTareas() {
+        return tareas;
     }
 
-    public void setTareasIds(Set<Long> tareasIds) {
-        this.tareasIds = tareasIds;
+    public void setTareas(Set<TareaData> tareasIds) {
+        this.tareas = tareasIds;
     }
 
     @Override
