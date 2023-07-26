@@ -1,7 +1,6 @@
 package madstodolist.controller;
 
 import madstodolist.dto.UsuarioData;
-import madstodolist.model.Usuario;
 import madstodolist.service.UsuarioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

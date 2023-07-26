@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.Email;
 import java.util.Date;
 
+// Clase de datos para el formulario de registro
 public class RegistroData {
     @Email
     private String eMail;

@@ -2,8 +2,8 @@ package madstodolist.dto;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.Set;
 
+// Data Transfer Object para la clase Usuario
 public class UsuarioData {
 
     private Long id;
@@ -50,19 +50,19 @@ public class UsuarioData {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
+    // si tienen el mismo ID (ignoramos el resto de atributos)
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof UsuarioData)) return false;
         UsuarioData that = (UsuarioData) o;
-        return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getEmail(), that.getEmail()) &&
-                Objects.equals(getNombre(), that.getNombre()) &&
-                Objects.equals(getFechaNacimiento(), that.getFechaNacimiento());
+        return Objects.equals(getId(), that.getId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getEmail(), getNombre(), getFechaNacimiento());
+        return Objects.hash(getId());
     }
 }
