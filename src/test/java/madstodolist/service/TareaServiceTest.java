@@ -34,9 +34,15 @@ public class TareaServiceTest {
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
         usuario.setPassword("123");
+
+        // Añadimos un usuario a la base de datos
         UsuarioData usuarioNuevo = usuarioService.registrar(usuario);
+
+        // Y añadimos dos tareas asociadas a ese usuario
         TareaData tarea1 = tareaService.nuevaTareaUsuario(usuarioNuevo.getId(), "Lavar coche");
         tareaService.nuevaTareaUsuario(usuarioNuevo.getId(), "Renovar DNI");
+
+        // Devolvemos los ids del usuario y de la primera tarea añadida
         Map<String, Long> ids = new HashMap<>();
         ids.put("usuarioId", usuarioNuevo.getId());
         ids.put("tareaId", tarea1.getId());
@@ -93,7 +99,7 @@ public class TareaServiceTest {
         Long tareaId = ids.get("tareaId");
 
         // WHEN
-        // modificamos la tarea correspondiente a ese identificador,
+        // modificamos la tarea correspondiente al identificador,
 
         tareaService.modificaTarea(tareaId, "Limpiar los cristales del coche");
 

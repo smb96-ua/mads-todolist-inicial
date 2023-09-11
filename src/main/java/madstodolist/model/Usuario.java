@@ -39,6 +39,8 @@ public class Usuario implements Serializable {
         this.email = email;
     }
 
+    // Getters y setters atributos básicos
+
     public Long getId() {
         return id;
     }
@@ -79,10 +81,13 @@ public class Usuario implements Serializable {
         this.fechaNacimiento = fechaNacimiento;
     }
 
+    // Getters y setters de la relación
+
     public Set<Tarea> getTareas() {
         return tareas;
     }
 
+    // Método helper para añadir una tarea a la lista y establecer la relación inversa
     public void addTarea(Tarea tarea) {
         // Si la tarea ya está en la lista, no la añadimos
         if (tareas.contains(tarea)) return;

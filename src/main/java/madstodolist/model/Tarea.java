@@ -35,6 +35,8 @@ public class Tarea implements Serializable {
         setUsuario(usuario); // Esto añadirá la tarea a la lista de tareas del usuario
     }
 
+    // Getters y setters básicos
+
     public Long getId() {
         return id;
     }
@@ -51,9 +53,13 @@ public class Tarea implements Serializable {
         this.titulo = titulo;
     }
 
+    // Getters y setters de la relación muchos-a-uno con Usuario
+
     public Usuario getUsuario() {
         return usuario;
     }
+
+    // Método para establecer la relación con el usuario
 
     public void setUsuario(Usuario usuario) {
         // Comprueba si el usuario ya está establecido

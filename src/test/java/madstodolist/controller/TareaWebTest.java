@@ -13,6 +13,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -37,32 +40,33 @@ public class TareaWebTest {
     @MockBean
     private ManagerUserSession managerUserSession;
 
-    class DosIds {
-        Long usuarioId;
-        Long tareaId;
-        public DosIds(Long usuarioId, Long tareaId) {
-            this.usuarioId = usuarioId;
-            this.tareaId = tareaId;
-        }
-    }
-
     // Método para inicializar los datos de prueba en la BD
-    // Devuelve una pareja de identificadores del usuario y la primera tarea añadida
-    DosIds addUsuarioTareasBD() {
+    // Devuelve un mapa con los identificadores del usuario y de la primera tarea añadida
+
+    Map<String, Long> addUsuarioTareasBD() {
+        // Añadimos un usuario a la base de datos
         UsuarioData usuario = new UsuarioData();
         usuario.setEmail("user@ua");
         usuario.setPassword("123");
         usuario = usuarioService.registrar(usuario);
+
+        // Y añadimos dos tareas asociadas a ese usuario
         TareaData tarea1 = tareaService.nuevaTareaUsuario(usuario.getId(), "Lavar coche");
         tareaService.nuevaTareaUsuario(usuario.getId(), "Renovar DNI");
-        return new DosIds(usuario.getId(), tarea1.getId());
+
+        // Devolvemos los ids del usuario y de la primera tarea añadida
+        Map<String, Long> ids = new HashMap<>();
+        ids.put("usuarioId", usuario.getId());
+        ids.put("tareaId", tarea1.getId());
+        return ids;
+
     }
 
     @Test
     public void listaTareas() throws Exception {
         // GIVEN
         // Un usuario con dos tareas en la BD
-        Long usuarioId = addUsuarioTareasBD().usuarioId;
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
 
         // Moqueamos el método usuarioLogeado para que devuelva el usuario 1L,
         // el mismo que se está usando en la petición. De esta forma evitamos
@@ -87,7 +91,7 @@ public class TareaWebTest {
     public void getNuevaTareaDevuelveForm() throws Exception {
         // GIVEN
         // Un usuario con dos tareas en la BD
-        Long usuarioId = addUsuarioTareasBD().usuarioId;
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
 
         // Ver el comentario en el primer test
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
@@ -111,7 +115,7 @@ public class TareaWebTest {
     public void postNuevaTareaDevuelveRedirectYAñadeTarea() throws Exception {
         // GIVEN
         // Un usuario con dos tareas en la BD
-        Long usuarioId = addUsuarioTareasBD().usuarioId;
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
 
         // Ver el comentario en el primer test
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
@@ -140,9 +144,9 @@ public class TareaWebTest {
     public void deleteTareaDevuelveOKyBorraTarea() throws Exception {
         // GIVEN
         // Un usuario con dos tareas en la BD
-        DosIds dosIds = addUsuarioTareasBD();
-        Long usuarioId = dosIds.usuarioId;
-        Long tareaLavarCocheId = dosIds.tareaId;
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaLavarCocheId = ids.get("tareaId");
 
         // Ver el comentario en el primer test
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
@@ -170,9 +174,9 @@ public class TareaWebTest {
     public void editarTareaActualizaLaTarea() throws Exception {
         // GIVEN
         // Un usuario con dos tareas en la BD
-        DosIds dosIds = addUsuarioTareasBD();
-        Long usuarioId = dosIds.usuarioId;
-        Long tareaLavarCocheId = dosIds.tareaId;
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaLavarCocheId = ids.get("tareaId");
 
         // Ver el comentario en el primer test
         when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
