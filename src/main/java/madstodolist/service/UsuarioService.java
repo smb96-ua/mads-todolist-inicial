@@ -19,7 +19,7 @@ public class UsuarioService {
 
     Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
-    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD}
+    public enum LoginStatus {LOGIN_OK, USER_NOT_FOUND, ERROR_PASSWORD, USER_BLOCKED}
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -33,6 +33,8 @@ public class UsuarioService {
             return LoginStatus.USER_NOT_FOUND;
         } else if (!usuario.get().getPassword().equals(password)) {
             return LoginStatus.ERROR_PASSWORD;
+        } else if (Boolean.TRUE.equals(usuario.get().getBloqueado())) {
+            return LoginStatus.USER_BLOCKED;
         } else {
             return LoginStatus.LOGIN_OK;
         }
@@ -82,5 +84,60 @@ public class UsuarioService {
         return usuarios.stream()
                 .map(usuario -> modelMapper.map(usuario, UsuarioData.class))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existeAdministrador() {
+        logger.debug("Verificando si existe un administrador");
+        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+        return usuarios.stream().anyMatch(usuario -> Boolean.TRUE.equals(usuario.getIsAdmin()));
+    }
+
+    @Transactional
+    public UsuarioData registrarConAdmin(UsuarioData usuario) {
+        // Verificar si el usuario quiere ser admin y ya existe uno
+        if (Boolean.TRUE.equals(usuario.getIsAdmin()) && existeAdministrador()) {
+            throw new UsuarioServiceException("Ya existe un administrador en el sistema");
+        }
+        
+        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioBD.isPresent())
+            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
+        else if (usuario.getEmail() == null)
+            throw new UsuarioServiceException("El usuario no tiene email");
+        else if (usuario.getPassword() == null)
+            throw new UsuarioServiceException("El usuario no tiene password");
+        else {
+            Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+            usuarioNuevo = usuarioRepository.save(usuarioNuevo);
+            return modelMapper.map(usuarioNuevo, UsuarioData.class);
+        }
+    }
+
+    @Transactional
+    public UsuarioData bloquearUsuario(Long idUsuario) {
+        logger.debug("Bloqueando usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new UsuarioServiceException("No existe usuario con id " + idUsuario);
+        }
+        if (Boolean.TRUE.equals(usuario.getIsAdmin())) {
+            throw new UsuarioServiceException("No se puede bloquear a un administrador");
+        }
+        usuario.setBloqueado(true);
+        usuario = usuarioRepository.save(usuario);
+        return modelMapper.map(usuario, UsuarioData.class);
+    }
+
+    @Transactional
+    public UsuarioData desbloquearUsuario(Long idUsuario) {
+        logger.debug("Desbloqueando usuario " + idUsuario);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new UsuarioServiceException("No existe usuario con id " + idUsuario);
+        }
+        usuario.setBloqueado(false);
+        usuario = usuarioRepository.save(usuario);
+        return modelMapper.map(usuario, UsuarioData.class);
     }
 }

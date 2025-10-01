@@ -47,12 +47,20 @@ public class LoginController {
 
             managerUserSession.logearUsuario(usuario.getId());
 
-            return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+            // Si es administrador, redirigir al listado de usuarios
+            if (Boolean.TRUE.equals(usuario.getIsAdmin())) {
+                return "redirect:/registrados";
+            } else {
+                return "redirect:/usuarios/" + usuario.getId() + "/tareas";
+            }
         } else if (loginStatus == UsuarioService.LoginStatus.USER_NOT_FOUND) {
             model.addAttribute("error", "No existe usuario");
             return "formLogin";
         } else if (loginStatus == UsuarioService.LoginStatus.ERROR_PASSWORD) {
             model.addAttribute("error", "Contraseña incorrecta");
+            return "formLogin";
+        } else if (loginStatus == UsuarioService.LoginStatus.USER_BLOCKED) {
+            model.addAttribute("error", "Usuario bloqueado");
             return "formLogin";
         }
         return "formLogin";
@@ -61,6 +69,8 @@ public class LoginController {
     @GetMapping("/registro")
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
+        // Verificar si existe un administrador para mostrar o no el checkbox
+        model.addAttribute("existeAdmin", usuarioService.existeAdministrador());
         return "formRegistro";
     }
 
@@ -68,12 +78,22 @@ public class LoginController {
    public String registroSubmit(@Valid RegistroData registroData, BindingResult result, Model model) {
 
         if (result.hasErrors()) {
+            model.addAttribute("existeAdmin", usuarioService.existeAdministrador());
             return "formRegistro";
         }
 
         if (usuarioService.findByEmail(registroData.getEmail()) != null) {
             model.addAttribute("registroData", registroData);
+            model.addAttribute("existeAdmin", usuarioService.existeAdministrador());
             model.addAttribute("error", "El usuario " + registroData.getEmail() + " ya existe");
+            return "formRegistro";
+        }
+
+        // Verificar si intenta registrarse como admin cuando ya existe uno
+        if (Boolean.TRUE.equals(registroData.getIsAdmin()) && usuarioService.existeAdministrador()) {
+            model.addAttribute("registroData", registroData);
+            model.addAttribute("existeAdmin", usuarioService.existeAdministrador());
+            model.addAttribute("error", "Ya existe un administrador en el sistema");
             return "formRegistro";
         }
 
@@ -82,9 +102,17 @@ public class LoginController {
         usuario.setPassword(registroData.getPassword());
         usuario.setFechaNacimiento(registroData.getFechaNacimiento());
         usuario.setNombre(registroData.getNombre());
+        usuario.setIsAdmin(registroData.getIsAdmin());
 
-        usuarioService.registrar(usuario);
-        return "redirect:/login";
+        try {
+            usuarioService.registrarConAdmin(usuario);
+            return "redirect:/login";
+        } catch (Exception e) {
+            model.addAttribute("registroData", registroData);
+            model.addAttribute("existeAdmin", usuarioService.existeAdministrador());
+            model.addAttribute("error", e.getMessage());
+            return "formRegistro";
+        }
    }
 
    @GetMapping("/logout")

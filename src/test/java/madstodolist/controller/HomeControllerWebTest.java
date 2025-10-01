@@ -67,6 +67,7 @@ public class HomeControllerWebTest {
         usuarioLogueado.setId(3L);
         usuarioLogueado.setEmail("admin@ua.es");
         usuarioLogueado.setNombre("Admin");
+        usuarioLogueado.setIsAdmin(true); // Usuario administrador
 
         List<UsuarioData> usuarios = Arrays.asList(usuario1, usuario2);
 
@@ -98,6 +99,7 @@ public class HomeControllerWebTest {
         usuarioLogueado.setId(2L);
         usuarioLogueado.setEmail("admin@ua.es");
         usuarioLogueado.setNombre("Admin");
+        usuarioLogueado.setIsAdmin(true); // Usuario administrador
 
         when(managerUserSession.usuarioLogeado()).thenReturn(2L);
         when(usuarioService.findById(2L)).thenReturn(usuarioLogueado);
@@ -111,5 +113,59 @@ public class HomeControllerWebTest {
                 .andExpect(model().attribute("usuarioLogueado", usuarioLogueado))
                 .andExpect(content().string(containsString("Usuario Test")))
                 .andExpect(content().string(containsString("test@ua.es")));
+    }
+
+    @Test
+    public void getListadoUsuarios_SinLoguear_DevuelveUnauthorized() throws Exception {
+        // GIVEN
+        when(managerUserSession.usuarioLogeado()).thenReturn(null);
+
+        // WHEN, THEN
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void getListadoUsuarios_UsuarioNoAdmin_DevuelveUnauthorized() throws Exception {
+        // GIVEN
+        UsuarioData usuarioNoAdmin = new UsuarioData();
+        usuarioNoAdmin.setId(1L);
+        usuarioNoAdmin.setEmail("user@ua.es");
+        usuarioNoAdmin.setNombre("Usuario Normal");
+        usuarioNoAdmin.setIsAdmin(false); // Usuario no administrador
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(usuarioNoAdmin);
+
+        // WHEN, THEN
+        this.mockMvc.perform(get("/registrados"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void getDescripcionUsuario_SinLoguear_DevuelveUnauthorized() throws Exception {
+        // GIVEN
+        when(managerUserSession.usuarioLogeado()).thenReturn(null);
+
+        // WHEN, THEN
+        this.mockMvc.perform(get("/registrados/1"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void getDescripcionUsuario_UsuarioNoAdmin_DevuelveUnauthorized() throws Exception {
+        // GIVEN
+        UsuarioData usuarioNoAdmin = new UsuarioData();
+        usuarioNoAdmin.setId(1L);
+        usuarioNoAdmin.setEmail("user@ua.es");
+        usuarioNoAdmin.setNombre("Usuario Normal");
+        usuarioNoAdmin.setIsAdmin(false); // Usuario no administrador
+
+        when(managerUserSession.usuarioLogeado()).thenReturn(1L);
+        when(usuarioService.findById(1L)).thenReturn(usuarioNoAdmin);
+
+        // WHEN, THEN
+        this.mockMvc.perform(get("/registrados/2"))
+                .andExpect(status().isUnauthorized());
     }
 }
