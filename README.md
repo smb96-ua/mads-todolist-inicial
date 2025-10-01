@@ -1,6 +1,11 @@
-# Aplicación inicial ToDoList
+# ToDoList MADS - Práctica 2
 
-Aplicación ToDoList de la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docente/GuiaDocente/Index?wcodest=C203&wcodasi=34037&wlengua=es&scaca=2019-20) usando Spring Boot y plantillas Thymeleaf.
+Aplicación ToDoList desarrollada para la asignatura [MADS](https://cvnet.cpd.ua.es/Guia-Docente/GuiaDocente/Index?wcodest=C203&wcodasi=34037&wlengua=es&scaca=2019-20) usando Spring Boot y plantillas Thymeleaf.
+
+## Gestión del proyecto
+
+- **Tablero Trello**: [ToDoList MADS](URL_DEL_TABLERO_TRELLO) (Añadir URL después de crear el tablero)
+- **Repositorio GitHub**: [mads-todolist-inicial](https://github.com/smb96-ua/mads-todolist-inicial)
 
 ## Requisitos
 
