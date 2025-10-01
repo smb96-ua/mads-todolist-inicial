@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Descripción de Usuario')"></head>
+
+<body>
+<div th:replace="fragments :: navbar (usuario=${usuarioLogueado})"></div>
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Descripción de Usuario</h2>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 th:text="'Usuario #' + ${usuario.id}"></h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>ID:</strong></div>
+                        <div class="col-sm-9" th:text="${usuario.id}"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Email:</strong></div>
+                        <div class="col-sm-9" th:text="${usuario.email}"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Nombre:</strong></div>
+                        <div class="col-sm-9" th:text="${usuario.nombre != null ? usuario.nombre : 'No especificado'}"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-3"><strong>Fecha de Nacimiento:</strong></div>
+                        <div class="col-sm-9" th:text="${usuario.fechaNacimiento != null ? #dates.format(usuario.fechaNacimiento, 'dd/MM/yyyy') : 'No especificada'}"></div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-secondary" th:href="@{/registrados}">Volver al listado</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
