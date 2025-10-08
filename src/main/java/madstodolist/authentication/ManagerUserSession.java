@@ -11,10 +11,6 @@ public class ManagerUserSession {
     @Autowired
     HttpSession session;
 
-    // Añadimos el id de usuario en la sesión HTTP para hacer
-    // una autorización sencilla. En los métodos de controllers
-    // comprobamos si el id del usuario logeado coincide con el obtenido
-    // desde la URL
     public void logearUsuario(Long idUsuario) {
         session.setAttribute("idUsuarioLogeado", idUsuario);
     }

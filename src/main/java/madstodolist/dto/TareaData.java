@@ -3,7 +3,6 @@ package madstodolist.dto;
 import java.io.Serializable;
 import java.util.Objects;
 
-// Data Transfer Object para la clase Tarea
 public class TareaData implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -12,7 +11,6 @@ public class TareaData implements Serializable {
     private String titulo;
     private Long usuarioId;  // Esta es la ID del usuario asociado
 
-    // Getters y setters
 
     public Long getId() {
         return id;
@@ -38,8 +36,6 @@ public class TareaData implements Serializable {
         this.usuarioId = usuarioId;
     }
 
-    // Sobreescribimos equals y hashCode para que dos tareas sean iguales
-    // si tienen el mismo ID (ignoramos el resto de atributos)
 
     @Override
     public boolean equals(Object o) {

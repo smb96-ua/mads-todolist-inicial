@@ -39,7 +39,6 @@ public class LoginController {
     @PostMapping("/login")
     public String loginSubmit(@ModelAttribute LoginData loginData, Model model, HttpSession session) {
 
-        // Llamada al servicio para comprobar si el login es correcto
         UsuarioService.LoginStatus loginStatus = usuarioService.login(loginData.geteMail(), loginData.getPassword());
 
         if (loginStatus == UsuarioService.LoginStatus.LOGIN_OK) {
@@ -47,7 +46,6 @@ public class LoginController {
 
             managerUserSession.logearUsuario(usuario.getId());
 
-            // Si es administrador, redirigir al listado de usuarios
             if (Boolean.TRUE.equals(usuario.getIsAdmin())) {
                 return "redirect:/registrados";
             } else {
@@ -69,7 +67,6 @@ public class LoginController {
     @GetMapping("/registro")
     public String registroForm(Model model) {
         model.addAttribute("registroData", new RegistroData());
-        // Verificar si existe un administrador para mostrar o no el checkbox
         model.addAttribute("existeAdmin", usuarioService.existeAdministrador());
         return "formRegistro";
     }
@@ -89,7 +86,6 @@ public class LoginController {
             return "formRegistro";
         }
 
-        // Verificar si intenta registrarse como admin cuando ya existe uno
         if (Boolean.TRUE.equals(registroData.getIsAdmin()) && usuarioService.existeAdministrador()) {
             model.addAttribute("registroData", registroData);
             model.addAttribute("existeAdmin", usuarioService.existeAdministrador());

@@ -1,6 +1,5 @@
 package madstodolist.dto;
 
-// Clase de datos para el formulario de login
 public class LoginData {
     private String eMail;
     private String password;

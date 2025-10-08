@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 
 @Service
-// Se ejecuta solo si el perfil activo es 'dev'
 @Profile("dev")
 public class InitDbService {
 
@@ -20,8 +19,6 @@ public class InitDbService {
     @Autowired
     private TareaRepository tareaRepository;
 
-    // Se ejecuta tras crear el contexto de la aplicación
-    // para inicializar la base de datos
     @PostConstruct
     public void initDatabase() {
         Usuario usuario = new Usuario("user@ua");

@@ -49,11 +49,9 @@ public class TareaService {
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
         }
-        // Hacemos uso de Java Stream API para mapear la lista de entidades a DTOs.
         List<TareaData> tareas = usuario.getTareas().stream()
                 .map(tarea -> modelMapper.map(tarea, TareaData.class))
                 .collect(Collectors.toList());
-        // Ordenamos la lista por id de tarea
         Collections.sort(tareas, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
         return tareas;
     }

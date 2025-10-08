@@ -32,8 +32,6 @@ public class HomeControllerWebTest {
 
     @Test
     public void getAboutPage() throws Exception {
-        // GIVEN
-        // Simulamos que hay un usuario autenticado
         UsuarioData usuario = new UsuarioData();
         usuario.setId(1L);
         usuario.setEmail("test@ua.es");
@@ -41,18 +39,15 @@ public class HomeControllerWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(1L);
         when(usuarioService.findById(1L)).thenReturn(usuario);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/about"))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("ToDoList")))
                 .andExpect(content().string(containsString("Desarrollada por Sergio Martínez Borrell")))
                 .andExpect(view().name("about"));
-                // No verificamos el usuario logueado porque el método about no lo necesita realmente
     }
 
     @Test
     public void getListadoUsuarios() throws Exception {
-        // GIVEN
         UsuarioData usuario1 = new UsuarioData();
         usuario1.setId(1L);
         usuario1.setEmail("ana.garcia@ua.es");
@@ -75,7 +70,6 @@ public class HomeControllerWebTest {
         when(usuarioService.findById(3L)).thenReturn(usuarioLogueado);
         when(usuarioService.findAll()).thenReturn(usuarios);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/registrados"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("listaUsuarios"))
@@ -89,7 +83,6 @@ public class HomeControllerWebTest {
 
     @Test
     public void getDescripcionUsuario() throws Exception {
-        // GIVEN
         UsuarioData usuario = new UsuarioData();
         usuario.setId(1L);
         usuario.setEmail("test@ua.es");
@@ -105,7 +98,6 @@ public class HomeControllerWebTest {
         when(usuarioService.findById(2L)).thenReturn(usuarioLogueado);
         when(usuarioService.findById(1L)).thenReturn(usuario);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/registrados/1"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("descripcionUsuario"))
@@ -117,17 +109,14 @@ public class HomeControllerWebTest {
 
     @Test
     public void getListadoUsuarios_SinLoguear_DevuelveUnauthorized() throws Exception {
-        // GIVEN
         when(managerUserSession.usuarioLogeado()).thenReturn(null);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/registrados"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     public void getListadoUsuarios_UsuarioNoAdmin_DevuelveUnauthorized() throws Exception {
-        // GIVEN
         UsuarioData usuarioNoAdmin = new UsuarioData();
         usuarioNoAdmin.setId(1L);
         usuarioNoAdmin.setEmail("user@ua.es");
@@ -137,24 +126,20 @@ public class HomeControllerWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(1L);
         when(usuarioService.findById(1L)).thenReturn(usuarioNoAdmin);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/registrados"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     public void getDescripcionUsuario_SinLoguear_DevuelveUnauthorized() throws Exception {
-        // GIVEN
         when(managerUserSession.usuarioLogeado()).thenReturn(null);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/registrados/1"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
     public void getDescripcionUsuario_UsuarioNoAdmin_DevuelveUnauthorized() throws Exception {
-        // GIVEN
         UsuarioData usuarioNoAdmin = new UsuarioData();
         usuarioNoAdmin.setId(1L);
         usuarioNoAdmin.setEmail("user@ua.es");
@@ -164,7 +149,6 @@ public class HomeControllerWebTest {
         when(managerUserSession.usuarioLogeado()).thenReturn(1L);
         when(usuarioService.findById(1L)).thenReturn(usuarioNoAdmin);
 
-        // WHEN, THEN
         this.mockMvc.perform(get("/registrados/2"))
                 .andExpect(status().isUnauthorized());
     }

@@ -63,7 +63,6 @@ public class HomeController {
         
         UsuarioData usuario = usuarioService.findById(idUsuario);
         if (usuario == null) {
-            // Podríamos lanzar una excepción personalizada o redireccionar
             return "redirect:/registrados";
         }
         model.addAttribute("usuario", usuario);

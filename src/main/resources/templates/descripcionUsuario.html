@@ -53,9 +53,9 @@
                 <div class="card-footer">
                     <a class="btn btn-secondary" th:href="@{/registrados}">Volver al listado</a>
                     
-                    <!-- Solo mostrar botones de bloqueo si no es administrador -->
+                    
                     <div th:if="${usuario.isAdmin != true}" class="d-inline-block ml-2">
-                        <!-- Botón de bloquear si está activo -->
+                        
                         <form th:if="${usuario.bloqueado != true}" class="d-inline" 
                               th:action="@{/registrados/{id}/bloquear(id=${usuario.id})}" method="post">
                             <button type="submit" class="btn btn-warning btn-sm"
@@ -64,7 +64,7 @@
                             </button>
                         </form>
                         
-                        <!-- Botón de desbloquear si está bloqueado -->
+                        
                         <form th:if="${usuario.bloqueado == true}" class="d-inline" 
                               th:action="@{/registrados/{id}/desbloquear(id=${usuario.id})}" method="post">
                             <button type="submit" class="btn btn-success btn-sm"

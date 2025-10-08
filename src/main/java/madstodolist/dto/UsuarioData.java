@@ -3,7 +3,6 @@ package madstodolist.dto;
 import java.util.Date;
 import java.util.Objects;
 
-// Data Transfer Object para la clase Usuario
 public class UsuarioData {
 
     private Long id;
@@ -14,7 +13,6 @@ public class UsuarioData {
     private Boolean isAdmin = false;
     private Boolean bloqueado = false;
 
-    // Getters y setters
 
     public Long getId() {
         return id;
@@ -68,8 +66,6 @@ public class UsuarioData {
         this.bloqueado = bloqueado;
     }
 
-    // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
-    // si tienen el mismo ID (ignoramos el resto de atributos)
 
     @Override
     public boolean equals(Object o) {

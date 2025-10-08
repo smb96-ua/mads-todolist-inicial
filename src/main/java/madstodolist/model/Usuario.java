@@ -29,21 +29,14 @@ public class Usuario implements Serializable {
     @Column(name = "bloqueado")
     private Boolean bloqueado = false;
 
-    // La relación es lazy por defecto,
-    // es necesario acceder a la lista de tareas para que se carguen
     @OneToMany(mappedBy = "usuario")
     Set<Tarea> tareas = new HashSet<>();
 
-    // Constructor vacío necesario para JPA/Hibernate.
-    // No debe usarse desde la aplicación.
     public Usuario() {}
 
-    // Constructor público con los atributos obligatorios. En este caso el correo electrónico.
     public Usuario(String email) {
         this.email = email;
     }
-
-    // Getters y setters atributos básicos
 
     public Long getId() {
         return id;
@@ -101,19 +94,13 @@ public class Usuario implements Serializable {
         this.bloqueado = bloqueado;
     }
 
-    // Getters y setters de la relación
-
     public Set<Tarea> getTareas() {
         return tareas;
     }
 
-    // Método helper para añadir una tarea a la lista y establecer la relación inversa
     public void addTarea(Tarea tarea) {
-        // Si la tarea ya está en la lista, no la añadimos
         if (tareas.contains(tarea)) return;
-        // Añadimos la tarea a la lista
         tareas.add(tarea);
-        // Establecemos la relación inversa del usuario en la tarea
         if (tarea.getUsuario() != this) {
             tarea.setUsuario(this);
         }
@@ -125,15 +112,12 @@ public class Usuario implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Usuario usuario = (Usuario) o;
         if (id != null && usuario.id != null)
-            // Si tenemos los ID, comparamos por ID
             return Objects.equals(id, usuario.id);
-        // si no comparamos por campos obligatorios
         return email.equals(usuario.email);
     }
 
     @Override
     public int hashCode() {
-        // Generamos un hash basado en los campos obligatorios
         return Objects.hash(email);
     }
 }

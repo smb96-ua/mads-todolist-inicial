@@ -40,9 +40,6 @@ public class UsuarioService {
         }
     }
 
-    // Se añade un usuario en la aplicación.
-    // El email y password del usuario deben ser distinto de null
-    // El email no debe estar registrado en la base de datos
     @Transactional
     public UsuarioData registrar(UsuarioData usuario) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
@@ -95,7 +92,6 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioData registrarConAdmin(UsuarioData usuario) {
-        // Verificar si el usuario quiere ser admin y ya existe uno
         if (Boolean.TRUE.equals(usuario.getIsAdmin()) && existeAdministrador()) {
             throw new UsuarioServiceException("Ya existe un administrador en el sistema");
         }

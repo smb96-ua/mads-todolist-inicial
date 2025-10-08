@@ -19,19 +19,12 @@ public class UsuarioTest {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    //
-    // Tests modelo Usuario en memoria, sin la conexión con la BD
-    //
 
     @Test
     public void crearUsuario() throws Exception {
 
-        // GIVEN
-        // Creado un nuevo usuario,
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
 
-        // WHEN
-        // actualizamos sus propiedades usando los setters,
 
         usuario.setNombre("Juan Gutiérrez");
         usuario.setPassword("12345678");
@@ -39,9 +32,6 @@ public class UsuarioTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         usuario.setFechaNacimiento(sdf.parse("1997-02-20"));
 
-        // THEN
-        // los valores actualizados quedan guardados en el usuario y se
-        // pueden recuperar con los getters.
 
         assertThat(usuario.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
         assertThat(usuario.getNombre()).isEqualTo("Juan Gutiérrez");
@@ -51,16 +41,11 @@ public class UsuarioTest {
 
     @Test
     public void comprobarIgualdadUsuariosSinId() {
-        // GIVEN
-        // Creados tres usuarios sin identificador, y dos de ellas con
-        // el mismo e-mail
 
         Usuario usuario1 = new Usuario("juan.gutierrez@gmail.com");
         Usuario usuario2 = new Usuario("juan.gutierrez@gmail.com");
         Usuario usuario3 = new Usuario("ana.gutierrez@gmail.com");
 
-        // THEN
-        // son iguales (Equal) los que tienen el mismo e-mail.
 
         assertThat(usuario1).isEqualTo(usuario2);
         assertThat(usuario1).isNotEqualTo(usuario3);
@@ -69,9 +54,6 @@ public class UsuarioTest {
 
     @Test
     public void comprobarIgualdadUsuariosConId() {
-        // GIVEN
-        // Creadas tres usuarios con distintos e-mails y dos de ellos
-        // con el mismo identificador,
 
         Usuario usuario1 = new Usuario("juan.gutierrez@gmail.com");
         Usuario usuario2 = new Usuario("pedro.gutierrez@gmail.com");
@@ -81,26 +63,15 @@ public class UsuarioTest {
         usuario2.setId(2L);
         usuario3.setId(1L);
 
-        // THEN
-        // son iguales (Equal) los usuarios que tienen el mismo identificador.
 
         assertThat(usuario1).isEqualTo(usuario3);
         assertThat(usuario1).isNotEqualTo(usuario2);
     }
 
-    //
-    // Tests UsuarioRepository.
-    // El código que trabaja con repositorios debe
-    // estar en un entorno transactional, para que todas las peticiones
-    // estén en la misma conexión a la base de datos, las entidades estén
-    // conectadas y sea posible acceder a colecciones LAZY.
-    //
 
     @Test
     @Transactional
     public void crearUsuarioBaseDatos() throws ParseException {
-        // GIVEN
-        // Un usuario nuevo creado sin identificador
 
         Usuario usuario = new Usuario("juan.gutierrez@gmail.com");
         usuario.setNombre("Juan Gutiérrez");
@@ -109,18 +80,12 @@ public class UsuarioTest {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         usuario.setFechaNacimiento(sdf.parse("1997-02-20"));
 
-        // WHEN
-        // se guarda en la base de datos
 
         usuarioRepository.save(usuario);
 
-        // THEN
-        // se actualiza el identificador del usuario,
 
         assertThat(usuario.getId()).isNotNull();
 
-        // y con ese identificador se recupera de la base de datos el usuario con
-        // los valores correctos de las propiedades.
 
         Usuario usuarioBD = usuarioRepository.findById(usuario.getId()).orElse(null);
         assertThat(usuarioBD.getEmail()).isEqualTo("juan.gutierrez@gmail.com");
@@ -132,20 +97,14 @@ public class UsuarioTest {
     @Test
     @Transactional
     public void buscarUsuarioEnBaseDatos() {
-        // GIVEN
-        // Un usuario en la BD
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuarioRepository.save(usuario);
         Long usuarioId = usuario.getId();
 
-        // WHEN
-        // se recupera de la base de datos un usuario por su identificador,
 
         Usuario usuarioBD = usuarioRepository.findById(usuarioId).orElse(null);
 
-        // THEN
-        // se obtiene el usuario correcto y se recuperan sus propiedades.
 
         assertThat(usuarioBD).isNotNull();
         assertThat(usuarioBD.getId()).isEqualTo(usuarioId);
@@ -155,19 +114,13 @@ public class UsuarioTest {
     @Test
     @Transactional
     public void buscarUsuarioPorEmail() {
-        // GIVEN
-        // Un usuario en la BD
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuarioRepository.save(usuario);
 
-        // WHEN
-        // buscamos al usuario por su correo electrónico,
 
         Usuario usuarioBD = usuarioRepository.findByEmail("user@ua").orElse(null);
 
-        // THEN
-        // se obtiene el usuario correcto.
 
         assertThat(usuarioBD.getNombre()).isEqualTo("Usuario Ejemplo");
     }
