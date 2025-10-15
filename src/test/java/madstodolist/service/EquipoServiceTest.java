@@ -128,4 +128,25 @@ public class EquipoServiceTest {
         
         assertThat(equipos).hasSize(2);
     }
+
+    @Test
+    public void renombrarEquipo() {
+        EquipoData equipo = equipoService.crearEquipo("Proyecto A");
+        
+        equipoService.renombrarEquipo(equipo.getId(), "Proyecto A Modificado");
+        
+        EquipoData equipoRecuperado = equipoService.findById(equipo.getId());
+        assertThat(equipoRecuperado.getNombre()).isEqualTo("Proyecto A Modificado");
+    }
+
+    @Test
+    public void eliminarEquipo() {
+        EquipoData equipo = equipoService.crearEquipo("Proyecto A");
+        Long equipoId = equipo.getId();
+        
+        equipoService.eliminarEquipo(equipoId);
+        
+        EquipoData equipoRecuperado = equipoService.findById(equipoId);
+        assertThat(equipoRecuperado).isNull();
+    }
 }

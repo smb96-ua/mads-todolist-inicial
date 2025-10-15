@@ -86,4 +86,24 @@ public class EquipoService {
                 .map(equipo -> modelMapper.map(equipo, EquipoData.class))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void renombrarEquipo(Long equipoId, String nuevoNombre) {
+        Equipo equipo = equipoRepository.findById(equipoId).orElse(null);
+        if (equipo == null) return;
+        equipo.setNombre(nuevoNombre);
+    }
+
+    @Transactional
+    public void eliminarEquipo(Long equipoId) {
+        Equipo equipo = equipoRepository.findById(equipoId).orElse(null);
+        if (equipo == null) return;
+        
+        for (Usuario usuario : equipo.getUsuarios()) {
+            usuario.getEquipos().remove(equipo);
+        }
+        equipo.getUsuarios().clear();
+        
+        equipoRepository.delete(equipo);
+    }
 }
