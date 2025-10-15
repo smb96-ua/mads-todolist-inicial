@@ -8,8 +8,7 @@ import madstodolist.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.util.List;
@@ -50,9 +49,61 @@ public class EquipoController {
 
         UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
         EquipoData equipo = equipoService.findById(idEquipo);
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(idEquipo);
         
         model.addAttribute("usuario", usuario);
         model.addAttribute("equipo", equipo);
+        model.addAttribute("usuarios", usuarios);
         return "detalleEquipo";
+    }
+
+    @GetMapping("/equipos/nuevo")
+    public String formNuevoEquipo(Model model, HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+        model.addAttribute("usuario", usuario);
+        return "formNuevoEquipo";
+    }
+
+    @PostMapping("/equipos")
+    public String crearEquipo(@RequestParam("nombre") String nombre, HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        equipoService.crearEquipo(nombre);
+        return "redirect:/equipos";
+    }
+
+    @PostMapping("/equipos/{id}/usuarios/{usuarioId}/agregar")
+    public String agregarUsuarioAEquipo(@PathVariable(value="id") Long idEquipo,
+                                        @PathVariable(value="usuarioId") Long idUsuario,
+                                        HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        equipoService.añadirUsuarioAEquipo(idEquipo, idUsuario);
+        return "redirect:/equipos/" + idEquipo;
+    }
+
+    @DeleteMapping("/equipos/{id}/usuarios/{usuarioId}")
+    @ResponseBody
+    public String eliminarUsuarioDeEquipo(@PathVariable(value="id") Long idEquipo,
+                                          @PathVariable(value="usuarioId") Long idUsuario,
+                                          HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        equipoService.eliminarUsuarioDeEquipo(idEquipo, idUsuario);
+        return "";
     }
 }
