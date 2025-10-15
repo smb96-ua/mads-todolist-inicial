@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Detalle del Equipo')"></head>
+
+<body>
+<div th:replace="fragments :: navbar (usuario=${usuario})"></div>
+
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h1 th:text="'Equipo: ' + ${equipo.nombre}"></h1>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <a class="btn btn-secondary" th:href="@{/equipos}">Volver a lista de equipos</a>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
