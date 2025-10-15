@@ -16,8 +16,8 @@ Esta práctica implementa la funcionalidad básica de gestión de equipos en la 
 
 Se han creado dos workflows de integración continua:
 
-- **developer-tests.yml**: Ejecuta todos los tests en cada push utilizando H2 en memoria
-- **integration-tests.yml**: Ejecuta tests de integración con PostgreSQL en contenedor Docker
+- **developer-tests.yml**: Ejecuta todos los tests en cada push utilizando Java 17 y H2 en memoria
+- **integration-tests.yml**: Ejecuta tests de integración con PostgreSQL 13 en contenedor Docker
 
 #### Configuración de Perfiles PostgreSQL
 
@@ -68,6 +68,48 @@ Se ha implementado la funcionalidad básica de equipos siguiendo TDD con 5 ciclo
 - Tests web con MockMvc
 - Control de acceso (requiere login)
 
+### 3. Historia de Usuario 009: Gestionar Pertenencia a Equipos
+
+Se ha implementado la funcionalidad completa para gestionar la pertenencia de usuarios a equipos:
+
+#### Ciclo 6: Gestión de Usuarios en Equipos
+- Nuevos métodos en `EquipoService`:
+  - `usuariosEquipo(Long equipoId)`: Obtener lista de usuarios de un equipo
+  - `eliminarUsuarioDeEquipo(Long equipoId, Long usuarioId)`: Eliminar usuario de equipo
+  - `equiposUsuario(Long usuarioId)`: Obtener lista de equipos de un usuario
+- Tests completos para todas las operaciones
+
+#### Funcionalidad Web Historia 009
+- **Crear equipos**: Formulario para crear nuevos equipos desde la interfaz
+  - `GET /equipos/nuevo`: Formulario de creación
+  - `POST /equipos`: Crear equipo
+  - Template: `formNuevoEquipo.html`
+- **Gestionar usuarios**: 
+  - `POST /equipos/{id}/usuarios/{usuarioId}/agregar`: Añadir usuario a equipo
+  - `DELETE /equipos/{id}/usuarios/{usuarioId}`: Eliminar usuario de equipo
+  - Vista actualizada en `detalleEquipo.html` con tabla de usuarios
+  - Eliminación con confirmación JavaScript
+
+### 4. Historia de Usuario 010: Administración de Equipos
+
+Se ha implementado la funcionalidad de administración completa de equipos:
+
+#### Ciclo 7: Renombrar y Eliminar Equipos
+- Nuevos métodos en `EquipoService`:
+  - `renombrarEquipo(Long equipoId, String nuevoNombre)`: Cambiar nombre del equipo
+  - `eliminarEquipo(Long equipoId)`: Eliminar equipo y todas sus relaciones
+- Tests completos de renombrado y eliminación
+
+#### Funcionalidad Web Historia 010
+- **Editar equipo**: Formulario para renombrar equipos
+  - `GET /equipos/{id}/editar`: Formulario de edición
+  - `POST /equipos/{id}/editar`: Actualizar nombre
+  - Template: `formEditarEquipo.html`
+- **Eliminar equipo**: Eliminar equipo completo
+  - `DELETE /equipos/{id}`: Eliminar equipo
+  - Confirmación JavaScript con mensaje de advertencia
+  - Limpieza automática de todas las relaciones usuario-equipo
+
 ## Modelo de Datos
 
 ```
@@ -86,22 +128,24 @@ USUARIOS (1) ←→ (N) EQUIPO_USUARIO (N) ←→ (1) EQUIPOS
 
 ## Metodología TDD
 
-Se ha seguido estrictamente el ciclo Red-Green-Refactor:
+Se ha seguido estrictamente el ciclo Red-Green-Refactor en **7 ciclos completos**:
 
 1. **Red**: Escribir test que falla
 2. **Green**: Implementar código mínimo para pasar el test
 3. **Refactor**: Mejorar el código manteniendo los tests verdes
 
 Cada ciclo se ha confirmado en un commit separado con mensaje descriptivo:
-- "TDD Ciclo 1: Test y entidad Equipo básica"
-- "TDD Ciclo 2: Relación many-to-many Usuario-Equipo"
-- "TDD Ciclo 3: EquipoRepository y tests de persistencia"
-- "TDD Ciclo 4: EquipoService con DTO y operaciones básicas"
-- "TDD Ciclo 5: EquipoController y vistas de listado"
+- **TDD Ciclo 1**: Test y entidad Equipo básica
+- **TDD Ciclo 2**: Relación many-to-many Usuario-Equipo
+- **TDD Ciclo 3**: EquipoRepository y tests de persistencia
+- **TDD Ciclo 4**: EquipoService con DTO y operaciones básicas
+- **TDD Ciclo 5**: EquipoController y vistas de listado
+- **TDD Ciclo 6**: Métodos gestión usuarios en equipos
+- **TDD Ciclo 7**: Métodos para renombrar y eliminar equipos
 
 ## Tecnologías Utilizadas
 
-- **Spring Boot 2.7.14**: Framework principal
+- **Spring Boot 2.7.14**: Framework principal (Java 17)
 - **JPA/Hibernate**: ORM con soporte PostgreSQL9Dialect
 - **H2 Database**: Base de datos en memoria para desarrollo
 - **PostgreSQL 13**: Base de datos de producción
@@ -109,24 +153,53 @@ Cada ciclo se ha confirmado en un commit separado con mensaje descriptivo:
 - **Bootstrap 4.6**: Framework CSS
 - **JUnit 5**: Framework de testing
 - **MockMvc**: Testing de controladores
-- **GitHub Actions**: CI/CD
+- **GitHub Actions**: CI/CD con Java 17
 - **Docker**: Contenedores PostgreSQL para tests
 
 ## Testing
 
-Total de tests ejecutados: **67 tests**
+Total de tests ejecutados: **72 tests** (todos pasan ✅)
 - Tests de modelo: 7 tests
-- Tests de repositorio: 14 tests  
-- Tests de servicio: 12 tests
+- Tests de repositorio: 18 tests  
+- Tests de servicio: 16 tests (9 en EquipoServiceTest)
 - Tests de controlador: 8 tests
-- Tests web integración: 26 tests
+- Tests web integración: 23 tests
 
 Todos los tests pasan correctamente tanto en H2 como en PostgreSQL.
 
-## Próximas Funcionalidades (Historias 009 y 010)
+## Funcionalidades Completas
 
-- Historia 009: Crear equipos, añadir/eliminar usuarios
-- Historia 010: Administración de equipos (renombrar, eliminar)
+**Historia 008 - Listado de equipos**: ✅ Completa
+- Ver lista de todos los equipos
+- Ver detalle de cada equipo
+- Navegación desde navbar
+
+**Historia 009 - Gestionar pertenencia**: ✅ Completa
+- Crear nuevos equipos desde interfaz web
+- Añadir usuarios a equipos
+- Eliminar usuarios de equipos
+- Ver usuarios de cada equipo
+
+**Historia 010 - Administración de equipos**: ✅ Completa
+- Renombrar equipos
+- Eliminar equipos (con limpieza de relaciones)
+- Formularios de edición
+- Confirmaciones JavaScript
+
+## Endpoints REST Implementados
+
+### Equipos
+- `GET /equipos` - Listar todos los equipos
+- `GET /equipos/nuevo` - Formulario crear equipo
+- `POST /equipos` - Crear equipo
+- `GET /equipos/{id}` - Ver detalle equipo
+- `GET /equipos/{id}/editar` - Formulario editar equipo
+- `POST /equipos/{id}/editar` - Actualizar nombre equipo
+- `DELETE /equipos/{id}` - Eliminar equipo
+
+### Gestión de Usuarios en Equipos
+- `POST /equipos/{id}/usuarios/{usuarioId}/agregar` - Añadir usuario
+- `DELETE /equipos/{id}/usuarios/{usuarioId}` - Eliminar usuario
 
 ## Ejecución
 
