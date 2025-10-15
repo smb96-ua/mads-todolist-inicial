@@ -67,4 +67,65 @@ public class EquipoServiceTest {
         EquipoData equipoRecuperado = equipoService.findById(equipo.getId());
         assertThat(equipoRecuperado).isNotNull();
     }
+
+    @Test
+    @Transactional
+    public void obtenerUsuariosDeEquipo() {
+        UsuarioData usuario1 = new UsuarioData();
+        usuario1.setEmail("user1@ua.es");
+        usuario1.setPassword("123");
+        usuario1 = usuarioService.registrar(usuario1);
+
+        UsuarioData usuario2 = new UsuarioData();
+        usuario2.setEmail("user2@ua.es");
+        usuario2.setPassword("123");
+        usuario2 = usuarioService.registrar(usuario2);
+        
+        EquipoData equipo = equipoService.crearEquipo("Proyecto A");
+        
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario1.getId());
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario2.getId());
+        
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        
+        assertThat(usuarios).hasSize(2);
+    }
+
+    @Test
+    @Transactional
+    public void eliminarUsuarioDeEquipo() {
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua.es");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        
+        EquipoData equipo = equipoService.crearEquipo("Proyecto A");
+        
+        equipoService.añadirUsuarioAEquipo(equipo.getId(), usuario.getId());
+        List<UsuarioData> usuarios = equipoService.usuariosEquipo(equipo.getId());
+        assertThat(usuarios).hasSize(1);
+        
+        equipoService.eliminarUsuarioDeEquipo(equipo.getId(), usuario.getId());
+        usuarios = equipoService.usuariosEquipo(equipo.getId());
+        assertThat(usuarios).hasSize(0);
+    }
+
+    @Test
+    @Transactional
+    public void obtenerEquiposDeUsuario() {
+        UsuarioData usuario = new UsuarioData();
+        usuario.setEmail("user@ua.es");
+        usuario.setPassword("123");
+        usuario = usuarioService.registrar(usuario);
+        
+        EquipoData equipo1 = equipoService.crearEquipo("Proyecto A");
+        EquipoData equipo2 = equipoService.crearEquipo("Proyecto B");
+        
+        equipoService.añadirUsuarioAEquipo(equipo1.getId(), usuario.getId());
+        equipoService.añadirUsuarioAEquipo(equipo2.getId(), usuario.getId());
+        
+        List<EquipoData> equipos = equipoService.equiposUsuario(usuario.getId());
+        
+        assertThat(equipos).hasSize(2);
+    }
 }
