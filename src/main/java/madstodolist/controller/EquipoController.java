@@ -106,4 +106,44 @@ public class EquipoController {
         equipoService.eliminarUsuarioDeEquipo(idEquipo, idUsuario);
         return "";
     }
+
+    @GetMapping("/equipos/{id}/editar")
+    public String formEditarEquipo(@PathVariable(value="id") Long idEquipo, Model model, HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        UsuarioData usuario = usuarioService.findById(idUsuarioLogeado);
+        EquipoData equipo = equipoService.findById(idEquipo);
+        
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("equipo", equipo);
+        return "formEditarEquipo";
+    }
+
+    @PostMapping("/equipos/{id}/editar")
+    public String editarEquipo(@PathVariable(value="id") Long idEquipo,
+                               @RequestParam("nombre") String nombre,
+                               HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        equipoService.renombrarEquipo(idEquipo, nombre);
+        return "redirect:/equipos/" + idEquipo;
+    }
+
+    @DeleteMapping("/equipos/{id}")
+    @ResponseBody
+    public String eliminarEquipo(@PathVariable(value="id") Long idEquipo, HttpSession session) {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado == null) {
+            return "redirect:/login";
+        }
+
+        equipoService.eliminarEquipo(idEquipo);
+        return "";
+    }
 }
