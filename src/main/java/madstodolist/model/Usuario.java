@@ -32,6 +32,9 @@ public class Usuario implements Serializable {
     @OneToMany(mappedBy = "usuario")
     Set<Tarea> tareas = new HashSet<>();
 
+    @ManyToMany(mappedBy = "usuarios", fetch = FetchType.LAZY)
+    Set<Equipo> equipos = new HashSet<>();
+
     public Usuario() {}
 
     public Usuario(String email) {
@@ -104,6 +107,10 @@ public class Usuario implements Serializable {
         if (tarea.getUsuario() != this) {
             tarea.setUsuario(this);
         }
+    }
+
+    public Set<Equipo> getEquipos() {
+        return equipos;
     }
 
     @Override
