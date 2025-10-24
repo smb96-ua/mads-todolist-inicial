@@ -147,4 +147,76 @@ public class TareaServiceTest {
         assertThat(tareaService.usuarioContieneTarea(usuarioId,tareaId)).isTrue();
     }
 
+    @Test
+    public void cambiarPrioridadTarea() {
+        // GIVEN
+        // Un usuario y una tarea en la BD
+
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long tareaId = ids.get("tareaId");
+
+        // WHEN
+        // cambiamos la prioridad de la tarea correspondiente al identificador,
+
+        tareaService.modificaPrioridad(tareaId, "ALTA");
+
+        // THEN
+        // la prioridad de la tarea se ha actualizado correctamente.
+
+        TareaData tareaBD = tareaService.findById(tareaId);
+        assertThat(tareaBD.getPrioridad()).isEqualTo("ALTA");
+    }
+
+    @Test
+    public void obtenerTareasConPrioridadAlta() {
+        // GIVEN
+        // Un usuario y dos tareas en la BD
+
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long usuarioId = ids.get("usuarioId");
+        Long tareaId = ids.get("tareaId");
+
+        // WHEN
+        // cambiamos la prioridad de una de las tareas a ALTA,
+
+        tareaService.modificaPrioridad(tareaId, "ALTA");
+
+        // THEN
+        // al obtener las tareas con prioridad ALTA del usuario,
+        // solo se devuelve la tarea que hemos actualizado.
+
+        List<TareaData> tareasPrioridadAlta = tareaService.allTareasPrioridadUsuario(usuarioId, "ALTA");
+        assertThat(tareasPrioridadAlta).hasSize(1);
+        assertThat(tareasPrioridadAlta.get(0).getId()).isEqualTo(tareaId);
+    }
+
+    @Test
+    public void verificarExcepcionTareaNoExiste() {
+        // GIVEN
+        // Un usuario y una tarea en la BD
+
+        Map<String, Long> ids = addUsuarioTareasBD();
+        Long tareaId = ids.get("tareaId");
+
+        // WHEN
+        // borramos la tarea correspondiente al identificador,
+
+        tareaService.borraTarea(tareaId);
+
+        // THEN
+        // al intentar modificar o borrar la tarea eliminada,
+        // se lanza una excepción indicando que la tarea no existe.
+
+        try {
+            tareaService.modificaTarea(tareaId, "Nueva descripción");
+        } catch (TareaServiceException ex) {
+            assertThat(ex.getMessage()).isEqualTo("No existe tarea con id " + tareaId);
+        }
+
+        try {
+            tareaService.borraTarea(tareaId);
+        } catch (TareaServiceException ex) {
+            assertThat(ex.getMessage()).isEqualTo("No existe tarea con id " + tareaId);
+        }
+    }
 }

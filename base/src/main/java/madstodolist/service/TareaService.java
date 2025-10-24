@@ -97,4 +97,33 @@ public class TareaService {
         }
         return usuario.getTareas().contains(tarea);
     }
+
+    @Transactional
+    public TareaData modificaPrioridad(Long idTarea, String nuevaPrioridad) {
+        logger.debug("Modificando prioridad de tarea " + idTarea + " - " + nuevaPrioridad);
+        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
+        if (tarea == null) {
+            throw new TareaServiceException("No existe tarea con id " + idTarea);
+        }
+        tarea.setPrioridad(nuevaPrioridad);
+        tarea = tareaRepository.save(tarea);
+        return modelMapper.map(tarea, TareaData.class);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TareaData> allTareasPrioridadUsuario(Long idUsuario, String prioridad) {
+        logger.debug("Devolviendo todas las tareas del usuario " + idUsuario + " con prioridad " + prioridad);
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
+        if (usuario == null) {
+            throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
+        }
+        // Hacemos uso de Java Stream API para mapear la lista de entidades a DTOs.
+        List<TareaData> tareas = usuario.getTareas().stream()
+                .map(tarea -> modelMapper.map(tarea, TareaData.class))
+                .filter(tareaData -> tareaData.getPrioridad().equals(prioridad))
+                .collect(Collectors.toList());
+        // Ordenamos la lista por id de tarea
+        Collections.sort(tareas, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
+        return tareas;
+    }
 }
