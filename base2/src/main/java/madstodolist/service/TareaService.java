@@ -31,25 +31,13 @@ public class TareaService {
     private ModelMapper modelMapper;
 
     @Transactional
-    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea, String prioridad) {
+    public TareaData nuevaTareaUsuario(Long idUsuario, String tituloTarea) {
         logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
         Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
         if (usuario == null) {
             throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
         }
         Tarea tarea = new Tarea(usuario, tituloTarea);
-        tareaRepository.save(tarea);
-        return modelMapper.map(tarea, TareaData.class);
-    }
-
-    @Transactional
-    public TareaData nuevaTareaConPrioridadUsuario(Long idUsuario, String tituloTarea, String prioridad) {
-        logger.debug("Añadiendo tarea " + tituloTarea + " al usuario " + idUsuario);
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
-        if (usuario == null) {
-            throw new TareaServiceException("Usuario " + idUsuario + " no existe al crear tarea " + tituloTarea);
-        }
-        Tarea tarea = new Tarea(usuario, tituloTarea, prioridad);
         tareaRepository.save(tarea);
         return modelMapper.map(tarea, TareaData.class);
     }
@@ -91,19 +79,6 @@ public class TareaService {
     }
 
     @Transactional
-    public TareaData modificaTareaPrioridad(Long idTarea, String nuevoTitulo, String nuevaPrioridad) {
-        logger.debug("Modificando tarea " + idTarea + " - " + nuevoTitulo);
-        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
-        if (tarea == null) {
-            throw new TareaServiceException("No existe tarea con id " + idTarea);
-        }
-        tarea.setTitulo(nuevoTitulo);
-        tarea.setPrioridad(nuevaPrioridad);
-        tarea = tareaRepository.save(tarea);
-        return modelMapper.map(tarea, TareaData.class);
-    }
-
-    @Transactional
     public void borraTarea(Long idTarea) {
         logger.debug("Borrando tarea " + idTarea);
         Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
@@ -122,35 +97,4 @@ public class TareaService {
         }
         return usuario.getTareas().contains(tarea);
     }
-
-    @Transactional
-    public TareaData cambiarPrioridad(Long idTarea, String nuevaPrioridad) {
-        logger.debug("Cambiando prioridad de tarea " + idTarea + " a " + nuevaPrioridad);
-        Tarea tarea = tareaRepository.findById(idTarea).orElse(null);
-        if (tarea == null) {
-            throw new TareaServiceException("No existe tarea con id " + idTarea);
-        }
-        tarea.setPrioridad(nuevaPrioridad);
-        tarea = tareaRepository.save(tarea);
-        return modelMapper.map(tarea, TareaData.class);
-    }
-
-    @Transactional(readOnly = true)
-    public List<TareaData> allTareasPrioridadUsuario(Long idUsuario, String prioridad) {
-        logger.debug("Devolviendo todas las tareas del usuario " + idUsuario + " con prioridad " + prioridad);
-        Usuario usuario = usuarioRepository.findById(idUsuario).orElse(null);
-        if (usuario == null) {
-            throw new TareaServiceException("Usuario " + idUsuario + " no existe al listar tareas ");
-        }
-        // Hacemos uso de Java Stream API para mapear la lista de entidades a DTOs.
-        List<TareaData> tareas = usuario.getTareas().stream()
-                .map(tarea -> modelMapper.map(tarea, TareaData.class))
-                .filter(tareaData -> tareaData.getPrioridad().equals(prioridad))
-                .collect(Collectors.toList());
-        // Ordenamos la lista por id de tarea
-        Collections.sort(tareas, (a, b) -> a.getId() < b.getId() ? -1 : a.getId() == b.getId() ? 0 : 1);
-        return tareas;
-    }
-
-    @Transactional()
 }

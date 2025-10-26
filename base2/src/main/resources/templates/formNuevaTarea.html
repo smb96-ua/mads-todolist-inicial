@@ -13,14 +13,6 @@
         <div class="form-group">
             <label for="titulo">Título de la tarea:</label>
             <input class="form-control" id="titulo" name="titulo" required th:field="*{titulo}" type="text"/>
-
-            <!-- MEJORADO: Selector en lugar de input text -->
-            <label for="prioridad" class="mt-3">Prioridad de la tarea:</label>
-            <select class="form-control" id="prioridad" name="prioridad" th:field="*{prioridad}">
-                <option value="BAJA">🔽 BAJA - Puede esperar</option>
-                <option value="MEDIA" selected>➖ MEDIA - Normal</option>
-                <option value="ALTA">🔺 ALTA - Urgente</option>
-            </select>
         </div>
         <button class="btn btn-primary" type="submit">Crear tarea</button>
         <a class="btn btn-link" th:href="@{/usuarios/{id}/tareas(id=${usuario.id})}">Cancelar</a>

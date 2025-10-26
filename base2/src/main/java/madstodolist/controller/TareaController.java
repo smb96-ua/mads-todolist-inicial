@@ -53,10 +53,10 @@ public class TareaController {
 
         comprobarUsuarioLogeado(idUsuario);
 
-        tareaService.nuevaTareaConPrioridadUsuario(idUsuario, tareaData.getTitulo(), tareaData.getPrioridad());
+        tareaService.nuevaTareaUsuario(idUsuario, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea creada correctamente");
         return "redirect:/usuarios/" + idUsuario + "/tareas";
-    }
+     }
 
     @GetMapping("/usuarios/{id}/tareas")
     public String listadoTareas(@PathVariable(value="id") Long idUsuario, Model model, HttpSession session) {
@@ -98,7 +98,7 @@ public class TareaController {
 
         comprobarUsuarioLogeado(idUsuario);
 
-        tareaService.modificaTareaPrioridad(idTarea, tareaData.getTitulo(), tareaData.getPrioridad());
+        tareaService.modificaTarea(idTarea, tareaData.getTitulo());
         flash.addFlashAttribute("mensaje", "Tarea modificada correctamente");
         return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
     }
@@ -117,42 +117,6 @@ public class TareaController {
 
         tareaService.borraTarea(idTarea);
         return "";
-    }
-
-    @PostMapping("/tareas/{id}/cambiar-prioridad")
-    public String cambiarPrioridad(@PathVariable(value="id") Long idTarea,
-                                    @RequestParam("prioridad") String prioridad,
-                                    HttpSession session) {
-        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
-        if (idUsuarioLogeado == null) {
-            return "redirect:/login";
-        }
-
-        TareaData tarea = tareaService.findById(idTarea);
-        if (tarea == null) {
-            throw new TareaNotFoundException();
-        }
-
-        comprobarUsuarioLogeado(tarea.getUsuarioId());
-
-        tareaService.cambiarPrioridad(idTarea, prioridad);
-        return "redirect:/usuarios/" + tarea.getUsuarioId() + "/tareas";
-    }
-
-    @GetMapping("/usuarios/{id}/tareas/prioridad/{prioridad}")
-    public String listadoTareasPorPrioridad(@PathVariable(value="id") Long idUsuario,
-                                            @PathVariable(value="prioridad") String prioridad,
-                                            Model model, HttpSession session) {
-        comprobarUsuarioLogeado(idUsuario);
-
-        UsuarioData usuario = usuarioService.findById(idUsuario);
-        List<TareaData> tareas = tareaService.allTareasPrioridadUsuario(idUsuario, prioridad);
-
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("tareas", tareas);
-        model.addAttribute("prioridadFiltro", prioridad);
-
-        return "listaTareas";
     }
 }
 

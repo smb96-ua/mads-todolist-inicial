@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -200,113 +199,5 @@ public class TareaWebTest {
 
         this.mockMvc.perform(get(urlListado))
                 .andExpect(content().string(containsString("Limpiar cristales coche")));
-    }
-
-    @Test
-    public void testCambiarPrioridadDesdeLaWeb() throws Exception {
-        // GIVEN
-        // Un usuario con una tarea en la BD
-
-        Map<String, Long> ids = addUsuarioTareasBD();
-        Long usuarioId = ids.get("usuarioId");
-        Long tareaId = ids.get("tareaId");
-
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
-
-        // WHEN
-        // realizamos una petición POST para cambiar la prioridad a ALTA
-
-        String urlCambiar = "/tareas/" + tareaId + "/cambiar-prioridad";
-        String urlRedirect = "/usuarios/" + usuarioId + "/tareas";
-
-        this.mockMvc.perform(post(urlCambiar)
-                        .param("prioridad", "ALTA"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl(urlRedirect));
-
-        // THEN
-        // la prioridad de la tarea se ha actualizado correctamente
-
-        TareaData tareaActualizada = tareaService.findById(tareaId);
-        assertThat(tareaActualizada.getPrioridad()).isEqualTo("ALTA");
-    }
-
-    @Test
-    public void testFiltrarTareasPorPrioridad() throws Exception {
-        // GIVEN
-        // Un usuario con tareas de diferentes prioridades
-
-        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
-        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea ALTA", "ALTA");
-        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea MEDIA", "MEDIA");
-        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea BAJA", "BAJA");
-
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
-
-        // WHEN
-        // filtramos por prioridad ALTA
-
-        String urlFiltro = "/usuarios/" + usuarioId + "/tareas/prioridad/ALTA";
-
-        // THEN
-        // solo aparece la tarea con prioridad ALTA
-
-        this.mockMvc.perform(get(urlFiltro))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Tarea ALTA")))
-                .andExpect(content().string(not(containsString("Tarea MEDIA"))))
-                .andExpect(content().string(not(containsString("Tarea BAJA"))));
-    }
-
-    @Test
-    public void testListadoMuestraBadgesConColores() throws Exception {
-        // GIVEN
-        // Un usuario con tareas de diferentes prioridades
-
-        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
-        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Urgente", "ALTA");
-        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Normal", "MEDIA");
-        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Pausada", "BAJA");
-
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
-
-        // WHEN
-        // listamos todas las tareas
-
-        String urlListado = "/usuarios/" + usuarioId + "/tareas";
-
-        // THEN
-        // el HTML contiene las clases de Bootstrap para los badges de colores
-
-        this.mockMvc.perform(get(urlListado))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("badge-danger")))   // ALTA
-                .andExpect(content().string(containsString("badge-primary")))  // MEDIA
-                .andExpect(content().string(containsString("badge-secondary"))); // BAJA
-    }
-
-    @Test
-    public void testFormularioNuevaTareaConSelectorPrioridad() throws Exception {
-        // GIVEN
-        // Un usuario en la BD
-
-        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
-
-        when(managerUserSession.usuarioLogeado()).thenReturn(usuarioId);
-
-        // WHEN
-        // accedemos al formulario de nueva tarea
-
-        String urlForm = "/usuarios/" + usuarioId + "/tareas/nueva";
-
-        // THEN
-        // el formulario contiene un selector de prioridad con las opciones correctas
-
-        this.mockMvc.perform(get(urlForm))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("<select")))
-                .andExpect(content().string(containsString("BAJA")))
-                .andExpect(content().string(containsString("MEDIA")))
-                .andExpect(content().string(containsString("ALTA")));
     }
 }

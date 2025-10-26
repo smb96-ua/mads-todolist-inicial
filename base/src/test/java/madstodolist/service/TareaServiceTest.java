@@ -158,7 +158,7 @@ public class TareaServiceTest {
         // WHEN
         // cambiamos la prioridad de la tarea correspondiente al identificador,
 
-        tareaService.modificaPrioridad(tareaId, "ALTA");
+        tareaService.cambiarPrioridad(tareaId, "ALTA");
 
         // THEN
         // la prioridad de la tarea se ha actualizado correctamente.
@@ -179,7 +179,7 @@ public class TareaServiceTest {
         // WHEN
         // cambiamos la prioridad de una de las tareas a ALTA,
 
-        tareaService.modificaPrioridad(tareaId, "ALTA");
+        tareaService.cambiarPrioridad(tareaId, "ALTA");
 
         // THEN
         // al obtener las tareas con prioridad ALTA del usuario,
@@ -217,6 +217,90 @@ public class TareaServiceTest {
             tareaService.borraTarea(tareaId);
         } catch (TareaServiceException ex) {
             assertThat(ex.getMessage()).isEqualTo("No existe tarea con id " + tareaId);
+        }
+    }
+
+    @Test
+    public void testCambiarPrioridadDeTarea() {
+        // GIVEN
+        // Una tarea en la BD con prioridad MEDIA por defecto
+
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
+        TareaData tarea = tareaService.nuevaTareaUsuario(usuarioId, "Tarea test");
+
+        // WHEN
+        // cambiamos la prioridad a ALTA,
+
+        TareaData tareaModificada = tareaService.cambiarPrioridad(tarea.getId(), "ALTA");
+
+        // THEN
+        // la prioridad se actualiza correctamente pero el título no cambia.
+
+        assertThat(tareaModificada.getPrioridad()).isEqualTo("ALTA");
+        assertThat(tareaModificada.getTitulo()).isEqualTo("Tarea test");
+    }
+
+    @Test
+    public void testObtenerTareasPorPrioridadAlta() {
+        // GIVEN
+        // Un usuario con varias tareas de diferentes prioridades
+
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea ALTA 1", "ALTA");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea MEDIA", "MEDIA");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea ALTA 2", "ALTA");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea BAJA", "BAJA");
+
+        // WHEN
+        // obtenemos solo las tareas con prioridad ALTA,
+
+        List<TareaData> tareasAltas = tareaService.allTareasPrioridadUsuario(usuarioId, "ALTA");
+
+        // THEN
+        // se devuelven únicamente las 2 tareas de prioridad ALTA.
+
+        assertThat(tareasAltas).hasSize(2);
+        assertThat(tareasAltas.get(0).getTitulo()).isEqualTo("Tarea ALTA 1");
+        assertThat(tareasAltas.get(1).getTitulo()).isEqualTo("Tarea ALTA 2");
+    }
+
+    @Test
+    public void testObtenerTareasPorPrioridadBaja() {
+        // GIVEN
+        // Un usuario con varias tareas de diferentes prioridades
+
+        Long usuarioId = addUsuarioTareasBD().get("usuarioId");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea ALTA", "ALTA");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea BAJA 1", "BAJA");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea MEDIA", "MEDIA");
+        tareaService.nuevaTareaConPrioridadUsuario(usuarioId, "Tarea BAJA 2", "BAJA");
+
+        // WHEN
+        // obtenemos solo las tareas con prioridad BAJA,
+
+        List<TareaData> tareasBajas = tareaService.allTareasPrioridadUsuario(usuarioId, "BAJA");
+
+        // THEN
+        // se devuelven únicamente las 2 tareas de prioridad BAJA.
+
+        assertThat(tareasBajas).hasSize(2);
+        assertThat(tareasBajas.get(0).getTitulo()).isEqualTo("Tarea BAJA 1");
+        assertThat(tareasBajas.get(1).getTitulo()).isEqualTo("Tarea BAJA 2");
+    }
+
+    @Test
+    public void testCambiarPrioridadDeTareaInexistenteLanzaExcepcion() {
+        // GIVEN
+        // No hay ninguna tarea con id 9999
+
+        // WHEN/THEN
+        // al intentar cambiar la prioridad de una tarea inexistente,
+        // se lanza una excepción.
+
+        try {
+            tareaService.cambiarPrioridad(9999L, "ALTA");
+        } catch (TareaServiceException ex) {
+            assertThat(ex.getMessage()).isEqualTo("No existe tarea con id 9999");
         }
     }
 }
